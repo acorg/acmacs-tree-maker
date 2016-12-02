@@ -11,7 +11,7 @@ Makes phylogenetic tree on the AC cluster.
    cd to that directory.
 
 2. Export sequences into fasta file, e.g.
-   ~/AD/bin/seqdb-export --db ~/AD/data/seqdb.json.xz source.fasta --flu h1 --start-date 20160401
+   ~/AD/bin/seqdb-export --db ~/AD/data/seqdb.json.xz source.fasta --flu h1 --start-date 20160401 --base-seq 'HAWAII/22/2012 MDCK1'
 
 3. Initilialize tree maker
    ~/AD/bin/tree-maker init
@@ -42,16 +42,15 @@ sys.path[:0] = [str(Path(os.environ["ACMACSD_ROOT"]).resolve().joinpath("py"))]
 import logging; module_logger = logging.getLogger(__name__)
 
 from acmacs_base import timeit
+from tree_maker import config as config_m
 
 # ----------------------------------------------------------------------
 
-def init(args):
-    pass
 
 # ----------------------------------------------------------------------
 
 sCommands = {
-    "init": init
+    "init": config_m.init
     }
 
 def main(args):
