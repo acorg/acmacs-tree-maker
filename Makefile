@@ -12,6 +12,8 @@ install-tree-maker:
 	ln -sf $(abspath bin)/tree-* $(ACMACSD_ROOT)/bin
 	ln -sf $(abspath py)/* $(ACMACSD_ROOT)/py
 
+clean:
+
 # ----------------------------------------------------------------------
 
 check-acmacsd-root:
