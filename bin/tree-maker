@@ -18,18 +18,15 @@ Makes phylogenetic tree on the AC cluster.
 
 4. Edit tree-maker.config
 
-5. Start making tree
-   ~/AD/bin/tree-maker start
-
-6. Check progress
-   ~/AD/bin/tree-maker state
-
-7. Perform next iteration
+5. Perform next iteration
    ~/AD/bin/tree-maker step
 Or automatically perform all iterations
    ~/AD/bin/tree-maker wait
 
-8. Use tree drawing program to generate pdf with the resulting tree or
+6. Check progress
+   ~/AD/bin/tree-maker state
+
+7. Use tree drawing program to generate pdf with the resulting tree or
    signature page.
 
 ======================================================================
@@ -42,7 +39,7 @@ sys.path[:0] = [str(Path(os.environ["ACMACSD_ROOT"]).resolve().joinpath("py"))]
 import logging; module_logger = logging.getLogger(__name__)
 
 from acmacs_base import timeit
-from tree_maker import config as config_m
+from tree_maker import config as config_m, maker as maker_m
 
 # ----------------------------------------------------------------------
 
@@ -50,7 +47,8 @@ from tree_maker import config as config_m
 # ----------------------------------------------------------------------
 
 sCommands = {
-    "init": config_m.init
+    "init": config_m.init,
+    "step": maker_m.step,
     }
 
 def main(args):

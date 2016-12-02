@@ -6,7 +6,7 @@
 import logging; module_logger = logging.getLogger(__name__)
 from pathlib import Path
 import getpass
-from acmacs_base import files, json
+from acmacs_base import json
 
 # ----------------------------------------------------------------------
 
@@ -52,14 +52,12 @@ def init(args):
 # ----------------------------------------------------------------------
 
 def load(filename: Path):
-    return files.read_json(filename)
+    return json.read_json(filename)
 
 # ----------------------------------------------------------------------
 
 def save(filename: Path, config):
-    files.backup_file(filename)
-    with filename.open("w") as f:
-        f.write(json.dumps(config, indent=2, compact=True, sort_keys=True))
+    json.write_json(path=filename, data=config, indent=2, compact=True)
 
 # ======================================================================
 ### Local Variables:
