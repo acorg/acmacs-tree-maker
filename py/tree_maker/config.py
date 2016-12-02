@@ -30,8 +30,8 @@ sDefault = {
     "garli_genthreshfortopoterm?": "GARLI termination condition: when no new significantly better scoring topology has been encountered in greater than this number of generations, garli stops",
     "garli_genthreshfortopoterm": 20000,
     "email": getpass.getuser(),
-    "machines?": "list of matchines to use: odette i19 i20 i21 o16 o17",
-    "machines": [],
+    "machines?": ["odette", "i19", "i20", "i21", "o16", "o17"],
+    "machines": ["odette", "i19", "i20", "i21", "o16", "o17"],
     }
 
 # ----------------------------------------------------------------------
