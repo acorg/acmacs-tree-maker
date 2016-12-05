@@ -10,15 +10,11 @@ from . import htcondor, maker_base
 
 # ----------------------------------------------------------------------
 
-class Raxml:
+class Raxml (maker_base.MakerBase):
 
     def __init__(self, config):
-        self.config = config
+        super().__init__(config)
         self.default_args = ["-c", "4", "-f", "d", "--silent", "--no-seq-check"]
-        self.random_gen = random.SystemRandom()
-
-    def random_seed(self):
-        return self.random_gen.randint(1, 0xFFFFFFF)   # note max for garli is 0x7ffffffe
 
     def prepare(self, state):
         # from . import htcondor
@@ -26,11 +22,14 @@ class Raxml:
         output_dir = working_dir.joinpath("raxml")
         output_dir.mkdir(parents=True, exist_ok=True)
         output_dir = output_dir.resolve()
+        num_runs = self.config["raxml_num_runs"]
+        run_id = (working_dir.parent.name + "-" + working_dir.name).replace(" ", "-")
         state["raxml"] = {
             "program": "/syn/bin/raxml",
             "output_dir": str(output_dir),
             "model": "GTRGAMMAI",
             "condor_log": str(output_dir.joinpath("condor.log")),
+            "run_ids": ["{}.{:04d}".format(run_id, run_no) for run_no in range(num_runs)],
             }
         general_args = ["-s", self.config["source"], "-w", state["raxml"]["output_dir"], "-m", state["raxml"]["model"], "-e", str(self.config["raxml_model_optimization_precision"]),
                             "-T", "1", "-N", "1"] + self.default_args
@@ -38,9 +37,6 @@ class Raxml:
         #     general_args += ["-t", str(source_tree)]
         # if outgroups:
         #     general_args += ["-o", ",".join(outgroups)]
-        num_runs = self.config["raxml_num_runs"]
-        run_id = (working_dir.parent.name + "-" + working_dir.name).replace(" ", "-")
-        state["raxml"]["run_ids"] = ["{}.{:04d}".format(run_id, run_no) for run_no in range(num_runs)]
         state["raxml"]["submitted_tasks"] = state["raxml"]["survived_tasks"] = len(state["raxml"]["run_ids"])
         args = [(general_args + ["-n", ri, "-p", str(self.random_seed())]) for ri in state["raxml"]["run_ids"]]
         state["raxml"]["desc"], state["raxml"]["condor_log"] = htcondor.prepare_submission(
@@ -62,7 +58,6 @@ class Raxml:
         if status == "done":
             state["raxml"]["overall_time"] = time_m.time() - state["raxml"]["started"]
             module_logger.info("RaXML jobs completed in " + RaxmlResult.time_str(state["raxml"]["overall_time"]))
-            state["state"] = "raxml_done"
 
     def analyse_logs(self, state):
         def load_log_file(filepath):
@@ -110,6 +105,7 @@ class Raxml:
         raxml_results.make_txt(Path(state["working_dir"], "result.raxml.txt"))
         raxml_results.make_json(Path(state["working_dir"], "result.raxml.json"))
         raxml_results.make_r_score_vs_time()
+        state["source_tree"] = raxml_results.best_tree()
         return raxml_results
 
 # ----------------------------------------------------------------------
@@ -150,13 +146,6 @@ class RaxmlResults (maker_base.Results):
     # def __init__(self, results, overall_time, submitted_tasks, survived_tasks):
     #     super().__init__(results=results, overall_time=overall_time, submitted_tasks=submitted_tasks, survived_tasks=survived_tasks)
 
-    def max_start_score(self):
-        max_e_all = max(self.results, key=lambda e: max(e.score, *e.start_scores))
-        return max(max_e_all.score, *max_e_all.start_scores)
-
-    def tabbed_report_header(cls):
-        return "{:^10s} {:^8s} {:^10s} {:^10s} {}".format("score", "time", "startscore", "endscore", "tree")
-
     def read(self):
         self.results = sorted((RaxmlResult(best_tree) for best_tree in Path(self.state["raxml"]["output_dir"]).glob("RAxML_bestTree.*")), key=operator.attrgetter("score"))
         self.longest_time = max(self.results, key=operator.attrgetter("time")).time if self.results else 0
@@ -164,6 +153,13 @@ class RaxmlResults (maker_base.Results):
         self.submitted_tasks = self.state["raxml"]["submitted_tasks"]
         self.survived_tasks = self.state["raxml"]["survived_tasks"]
         return self
+
+    def max_start_score(self):
+        max_e_all = max(self.results, key=lambda e: max(e.score, *e.start_scores))
+        return max(max_e_all.score, *max_e_all.start_scores)
+
+    def tabbed_report_header(cls):
+        return "{:^10s} {:^8s} {:^10s} {:^10s} {}".format("score", "time", "startscore", "endscore", "tree")
 
     def make_r_score_vs_time(self):
         filepath = Path(self.state["working_dir"], "raxml.score-vs-time.r")

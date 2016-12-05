@@ -10,6 +10,17 @@ from acmacs_base import json as json_m
 
 # ----------------------------------------------------------------------
 
+class MakerBase:
+
+    def __init__(self, config):
+        self.config = config
+        self.random_gen = random.SystemRandom()
+
+    def random_seed(self):
+        return self.random_gen.randint(1, 0xFFFFFFF)   # note max for garli is 0x7ffffffe
+
+# ----------------------------------------------------------------------
+
 class Result:
 
     def __repr__(self):
