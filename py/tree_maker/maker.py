@@ -26,6 +26,24 @@ def step(args):
 
 # ----------------------------------------------------------------------
 
+def wait(args):
+    config = config_m.load(Path(args.working_dir, args.config_file_name))
+    state_filename = Path(args.working_dir, "state.json")
+    if state_filename.exists():
+        state = json.read_json(state_filename)
+    else:
+        state = {
+            "state": "init",
+            "working_dir": str(Path(args.working_dir).resolve())
+            }
+        json.write_json(path=state_filename, data=state, indent=2, compact=True)
+    runner = create_runner(config=config, state=state)
+    while state["state"] != "completed":
+        runner.step()
+        json.write_json(path=state_filename, data=state, indent=2, compact=True)
+
+# ----------------------------------------------------------------------
+
 def create_runner(config, state):
     if config["mode"] == "raxml_survived_best_garli":
         runner = RaxmlSurvivedBestGarli(config=config, state=state)
@@ -49,10 +67,8 @@ class RunnerBase:
         getattr(self, "on_state_" + self.state["state"])()
         return self
 
-    def wait(self):
-        while self.state["state"] != "completed":
-            self.step()
-        return self
+    def on_state_completed(self):
+        module_logger.info('Completed')
 
     def get_raxml(self):
         from .raxml import Raxml
@@ -66,7 +82,7 @@ class RaxmlFirst (RunnerBase):
         return self.raxml_submit()
 
     def raxml_submit(self, submit=True):
-        raxml = get_raxml()
+        raxml = self.get_raxml()
         raxml.prepare(state=self.state)
         if submit:
             raxml.submit(state=self.state)
@@ -76,9 +92,9 @@ class RaxmlFirst (RunnerBase):
 class RaxmlSurvivedBestGarli (RaxmlFirst):
 
     def on_state_raxml_submitted(self, **kwargs):
-        raxml = get_raxml()
+        raxml = self.get_raxml()
         raxml.wait(state=self.state)
-        if not state["raxml"].get("overall_time"):
+        if not self.state["raxml"].get("overall_time"):
             raxml.analyse_logs(state=self.state)
         else:
             raxml.make_results(state=self.state)
@@ -91,7 +107,7 @@ class RaxmlBestGarli (RaxmlFirst):
     def on_state_raxml_submitted(self, **kwargs):
         raxml = get_raxml()
         raxml.wait(state=self.state)
-        if state["raxml"].get("overall_time"):
+        if self.state["raxml"].get("overall_time"):
             raxml.make_results(state=self.state)
             # self.garli_submit(self.raxml_results.best_tree())
 

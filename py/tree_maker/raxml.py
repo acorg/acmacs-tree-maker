@@ -5,7 +5,7 @@
 
 import logging; module_logger = logging.getLogger(__name__)
 from pathlib import Path
-import random, time as time_m
+import re, random, time as time_m, operator, subprocess
 from . import htcondor, maker_base
 
 # ----------------------------------------------------------------------
@@ -41,6 +41,7 @@ class Raxml:
         num_runs = self.config["raxml_num_runs"]
         run_id = (working_dir.parent.name + "-" + working_dir.name).replace(" ", "-")
         state["raxml"]["run_ids"] = ["{}.{:04d}".format(run_id, run_no) for run_no in range(num_runs)]
+        state["raxml"]["submitted_tasks"] = state["raxml"]["survived_tasks"] = len(state["raxml"]["run_ids"])
         args = [(general_args + ["-n", ri, "-p", str(self.random_seed())]) for ri in state["raxml"]["run_ids"]]
         state["raxml"]["desc"], state["raxml"]["condor_log"] = htcondor.prepare_submission(
             program=state["raxml"]["program"],
@@ -60,7 +61,7 @@ class Raxml:
         status  = job.wait(timeout=self.config["wait_timout"])
         if status == "done":
             state["raxml"]["overall_time"] = time_m.time() - state["raxml"]["started"]
-        module_logger.info("RaXML jobs completed in " + RaxmlResult.time_str(state["raxml"]["overall_time"]))
+            module_logger.info("RaXML jobs completed in " + RaxmlResult.time_str(state["raxml"]["overall_time"]))
 
     def analyse_logs(self, state):
         def load_log_file(filepath):
@@ -97,6 +98,7 @@ class Raxml:
                 # module_logger.info('run_id_to_del {}'.format(run_id_to_del))
                 for ri in run_id_to_del:
                     state["raxml"]["run_ids"].remove(ri)
+                state["raxml"]["survived_tasks"] -= len(run_id_to_del)
                 # module_logger.info('To kill {}: {} run_ids left: {}'.format(n_to_kill, to_kill, state["raxml"]["run_ids"]))
                 # module_logger.info('To kill {}: {}'.format(n_to_kill, to_kill))
             # else:
@@ -106,7 +108,7 @@ class Raxml:
         raxml_results = RaxmlResults(config=self.config, state=state).read()
         raxml_results.make_txt(Path(state["working_dir"], "result.raxml.txt"))
         raxml_results.make_json(Path(state["working_dir"], "result.raxml.json"))
-        make_r_score_vs_time(target_dir=state["working_dir"], source_dir=state["raxml"]["output_dir"], results=raxml_results)
+        raxml_results.make_r_score_vs_time()
         return raxml_results
 
 # ----------------------------------------------------------------------
@@ -124,12 +126,12 @@ class RaxmlResult (maker_base.Result):
         self.tree = best_tree
         self.run_id = ".".join(best_tree.parts[-1].split(".")[1:])
         info_data = best_tree.parent.joinpath("RAxML_info." + self.run_id).open().read()
-        m_score = cls.sInfoBestScore.search(info_data)
+        m_score = self.sInfoBestScore.search(info_data)
         if m_score:
-            self.best_score = float(m_score.group(1))
+            self.score = float(m_score.group(1))
         else:
             raise ValueError("Raxml: cannot extract best score from " + str(Path(output_dir, "RAxML_info." + self.run_id)))
-        m_time = cls.sInfoExecutionTime.search(info_data)
+        m_time = self.sInfoExecutionTime.search(info_data)
         if m_time:
             self.time = float(m_time.group(1))
         else:
@@ -158,9 +160,43 @@ class RaxmlResults (maker_base.Results):
         self.results = sorted((RaxmlResult(best_tree) for best_tree in Path(self.state["raxml"]["output_dir"]).glob("RAxML_bestTree.*")), key=operator.attrgetter("score"))
         self.longest_time = max(self.results, key=operator.attrgetter("time")).time if self.results else 0
         self.overall_time = self.state["raxml"]["overall_time"]
-        # self.submitted_tasks = submitted_tasks
-        # self.survived_tasks = survived_tasks
+        self.submitted_tasks = self.state["raxml"]["submitted_tasks"]
+        self.survived_tasks = self.state["raxml"]["survived_tasks"]
         return self
+
+    def make_r_score_vs_time(self):
+        filepath = Path(self.state["working_dir"], "raxml.score-vs-time.r")
+        module_logger.info('Generating {}'.format(filepath))
+        colors = {k.tree: c for k, c in zip(self.results, ["green", "cyan", "blue"])}
+        if len(self.results) > 3:
+            colors[self.results[-1].tree] = "red"
+        with filepath.open("w") as f:
+            f.write('doplot <- function(lwd) {\n')
+            f.write('    plot(c(0, {longest_time}), c({min_score}, {max_score}), type="n", xlab="time (hours)", ylab="RAxML score", main="RAxML processing" )\n'.format(
+                longest_time=self.longest_time / 3600,
+                min_score=-self.results[0].score,
+                max_score=-self.max_start_score()
+                # max_score=-self.results[-1].score,
+                ))
+            f.write('    legend("bottomright", lwd=5, legend=c({trees}), col=c({colors}))\n'.format(
+                trees=",".join(repr(str(t).split("/")[-1]) for t in sorted(colors)),
+                colors=",".join(repr(colors[t]) for t in sorted(colors))))
+            for r_e in reversed(self.results): # reversed for the best score line appear on top
+                f.write('    d <- read.table("{log}")\n'.format(log=str(r_e.tree).replace("/RAxML_bestTree.", "/RAxML_log.")))
+                f.write('    dlen <- length(d$V1)\n')
+                f.write('    d$V1 <- d$V1 / 3600\n')
+                color = colors.get(r_e.tree, "grey")
+                f.write('    lines(d, col="{color}", lwd=lwd)\n'.format(color=color))
+                f.write('    points(d$V1[dlen], d$V2[dlen], col="black")\n')
+            f.write('}\n\n')
+            f.write('pdf("{fn}", 10, 10)\n'.format(fn=filepath.with_suffix(".pdf")))
+            f.write('doplot(lwd=0.1)\n')
+            f.write('dev.off()\n\n')
+            # f.write('png("{fn}", 1200, 1200)\n'.format(fn=filepath.with_suffix(".png")))
+            # f.write('doplot(lwd=0.5)\n')
+            # f.write('dev.off()\n\n')
+        subprocess.run(["Rscript", str(filepath)], stdout=subprocess.DEVNULL)
+        module_logger.info('Plot {} generated'.format(filepath.with_suffix(".pdf")))
 
 # ======================================================================
 ### Local Variables:
