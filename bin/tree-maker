@@ -11,7 +11,7 @@ Makes phylogenetic tree on the AC cluster.
    cd to that directory.
 
 2. Export sequences into fasta file, e.g.
-   ~/AD/bin/seqdb-export --db ~/AD/data/seqdb.json.xz source.fasta --flu h1 --start-date 20160401 --base-seq 'HAWAII/22/2012 MDCK1'
+   ~/AD/bin/seqdb-export --tree-maker --db ~/AD/data/seqdb.json.xz source.fasta --flu h1 --start-date 20160401 --base-seq 'HAWAII/22/2012 MDCK1'
 
 3. Initilialize tree maker
    ~/AD/bin/tree-maker init

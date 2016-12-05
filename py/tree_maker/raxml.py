@@ -47,7 +47,7 @@ class Raxml:
             program_args=args,
             description="RAxML {run_id} {num_runs}".format(run_id=run_id, num_runs=num_runs,),
             current_dir=output_dir,
-            capture_stdout=False, email=self.config["email"], notification="Error", machines=self.config["machines"] or None)
+            capture_stdout=True, email=self.config["email"], notification="Error", machines=self.config["machines"] or None)
         state["state"] = "raxml_submission_prepared"
 
     def submit(self, state):
