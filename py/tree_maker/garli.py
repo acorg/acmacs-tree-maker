@@ -5,7 +5,7 @@
 
 import logging; module_logger = logging.getLogger(__name__)
 from pathlib import Path
-import sys, re, time as time_m, subprocess
+import sys, re, time as time_m, operator, subprocess
 from . import htcondor, maker_base
 
 # ----------------------------------------------------------------------
@@ -133,7 +133,7 @@ class GarliResult (maker_base.Result):
 
     def read(self, best_tree):
         self.tree = str(best_tree)
-        self.run_id = Path(best_tree.parts[-1].stem).stem
+        self.run_id = Path(best_tree.stem).stem
         self.score, self.time, self.start_score = None, None, None
         logfile = best_tree.parent.joinpath(self.run_id + ".log00.log")
         for log_line in logfile.open():
@@ -147,6 +147,9 @@ class GarliResult (maker_base.Result):
         if self.score is None or self.time is None or self.start_score is None:
             raise GarliNoResult("Unable to parse " + str(logfile))   # perhaps this condor task was killed
 
+    def tabbed_report(self):
+        return "{:10.4f} {:>8s} {:10.4f} {}".format(self.score, self.time_str(self.time), self.start_score, str(self.tree))
+
 # ----------------------------------------------------------------------
 
 class GarliResults (maker_base.Results):
@@ -157,6 +160,9 @@ class GarliResults (maker_base.Results):
         self.overall_time = self.state["garli"]["overall_time"]
         self.submitted_tasks = self.state["garli"]["submitted_tasks"]
         return self
+
+    def tabbed_report_header(cls):
+        return "{:^10s} {:^8s} {:^10s} {}".format("score", "time", "startscore", "tree")
 
 # ----------------------------------------------------------------------
 

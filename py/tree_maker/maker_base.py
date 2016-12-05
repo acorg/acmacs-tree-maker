@@ -75,7 +75,7 @@ class Results:
                 f.write("Overall time:    " + Result.time_str(self.overall_time)+ "\n")
             if self.submitted_tasks:
                 f.write("Submitted tasks: " + str(self.submitted_tasks) + "\n")
-            if self.survived_tasks and self.survived_tasks != self.submitted_tasks:
+            if getattr(self, "survived_tasks", None) and self.survived_tasks != self.submitted_tasks:
                 f.write("Survived tasks:  " + str(self.survived_tasks) + "\n")
             f.write("\n")
             f.write(self.tabbed_report_header()+ "\n")
