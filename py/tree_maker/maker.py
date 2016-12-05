@@ -121,7 +121,6 @@ class RaxmlSurvivedBestGarli (RaxmlFirst):
         else:
             raxml.make_results(state=self.state)
             self.state["state"] = "raxml_done"
-            self.garli_submit()
 
 # ----------------------------------------------------------------------
 
@@ -134,7 +133,6 @@ class RaxmlBestGarli (RaxmlFirst):
         if self.state["raxml"].get("overall_time"):
             raxml.make_results(state=self.state)
             self.state["state"] = "raxml_done"
-            self.garli_submit()
 
 # ----------------------------------------------------------------------
 

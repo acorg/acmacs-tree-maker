@@ -5,7 +5,7 @@
 
 import logging; module_logger = logging.getLogger(__name__)
 from pathlib import Path
-import sys, re, random, time as time_m, subprocess
+import sys, re, time as time_m, subprocess
 from . import htcondor, maker_base
 
 # ----------------------------------------------------------------------
@@ -23,15 +23,16 @@ class Garli (maker_base.MakerBase):
         output_dir.mkdir(parents=True, exist_ok=True)
         output_dir = output_dir.resolve()
         num_runs = self.config["garli_num_runs"]
+        run_id = (working_dir.parent.name + "-" + working_dir.name).replace(" ", "-")
         state["garli"] = {
             "program": "/syn/bin/garli",
             "output_dir": str(output_dir),
             "condor_log": str(output_dir.joinpath("condor.log")),
-            "run_ids" = ["{}.{:04d}".format(run_id, run_no) for run_no in range(num_runs)]
+            "run_ids": ["{}.{:04d}".format(run_id, run_no) for run_no in range(num_runs)],
             }
         state["garli"]["submitted_tasks"] = len(state["garli"]["run_ids"])
         state["garli"]["availablememory"] = self.find_memory_requirements(state) # source=source, source_tree=source_tree, outgroup=outgroup, output_dir=output_dir.resolve(), attachmentspertaxon=attachmentspertaxon, randseed=self.random_seed(), genthreshfortopoterm=genthreshfortopoterm, searchreps=searchreps, stoptime=stoptime, strip_comments=strip_comments)
-        conf_files = [str(self._make_conf(run_id, state).resolve()) for run_id in run_ids]
+        conf_files = [str(self._make_conf(run_id, state).resolve()) for run_id in state["garli"]["run_ids"]]
         module_logger.info('{} garli conf files saved to {}'.format(len(conf_files), output_dir))
         state["garli"]["desc"], state["garli"]["condor_log"] = htcondor.prepare_submission(
             program=state["garli"]["program"],

@@ -5,7 +5,7 @@
 
 import logging; module_logger = logging.getLogger(__name__)
 from pathlib import Path
-import re, random, time as time_m, operator, subprocess
+import re, time as time_m, operator, subprocess
 from . import htcondor, maker_base
 
 # ----------------------------------------------------------------------
