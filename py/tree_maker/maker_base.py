@@ -72,6 +72,8 @@ class Results:
 
     def make_json(self, filepath :Path):
         data = copy.copy(vars(self))
+        data.pop("config", None)
+        data.pop("state", None)
         data["results"] = [e.json() for e in data["results"]]
         json_m.write_json(filepath, data)
 

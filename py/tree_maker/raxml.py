@@ -62,6 +62,7 @@ class Raxml:
         if status == "done":
             state["raxml"]["overall_time"] = time_m.time() - state["raxml"]["started"]
             module_logger.info("RaXML jobs completed in " + RaxmlResult.time_str(state["raxml"]["overall_time"]))
+            state["state"] = "raxml_done"
 
     def analyse_logs(self, state):
         def load_log_file(filepath):
