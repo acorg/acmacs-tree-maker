@@ -6,7 +6,7 @@
 import logging; module_logger = logging.getLogger(__name__)
 from pathlib import Path
 from . import config as config_m
-from acmacs_base import json
+from acmacs_base import json as json_m
 
 # ----------------------------------------------------------------------
 
@@ -14,15 +14,15 @@ def step(args):
     config = config_m.load(Path(args.working_dir, args.config_file_name))
     state_filename = Path(args.working_dir, "state.json")
     if state_filename.exists():
-        state = json.read_json(state_filename)
+        state = json_m.read_json(state_filename)
     else:
         state = {
             "state": "init",
             "working_dir": str(Path(args.working_dir).resolve())
             }
-        json.write_json(path=state_filename, data=state, indent=2, compact=True)
+        json_m.write_json(path=state_filename, data=state, indent=2, compact=True)
     new_state = create_runner(config=config, state=state).step().state
-    json.write_json(path=state_filename, data=new_state, indent=2, compact=True)
+    json_m.write_json(path=state_filename, data=new_state, indent=2, compact=True)
 
 # ----------------------------------------------------------------------
 
@@ -30,17 +30,17 @@ def wait(args):
     config = config_m.load(Path(args.working_dir, args.config_file_name))
     state_filename = Path(args.working_dir, "state.json")
     if state_filename.exists():
-        state = json.read_json(state_filename)
+        state = json_m.read_json(state_filename)
     else:
         state = {
             "state": "init",
             "working_dir": str(Path(args.working_dir).resolve())
             }
-        json.write_json(path=state_filename, data=state, indent=2, compact=True)
+        json_m.write_json(path=state_filename, data=state, indent=2, compact=True)
     runner = create_runner(config=config, state=state)
     while state["state"] != "completed":
         runner.step()
-        json.write_json(path=state_filename, data=state, indent=2, compact=True)
+        json_m.write_json(path=state_filename, data=state, indent=2, compact=True)
 
 # ----------------------------------------------------------------------
 
@@ -117,56 +117,36 @@ class RaxmlGarli (RunnerBase):
         overall_time = self.state["raxml"]["overall_time"] + self.state["garli"]["overall_time"]
         overall_time_s = Result.time_str(overall_time)
         module_logger.info('Overall time: ' + overall_time_s)
+        from .garli import GarliResults
+        garli_results = GarliResults.from_json(config=self.config, state=self.state, filepath=Path(self.state["working_dir"], "result.garli.json"))
+        r_best = vars(garli_results.results[0])
+        r_best["overall_time"] = overall_time
+        r_best["overall_time_s"] = overall_time_s
+        json_m.write_json(Path(self.state["working_dir"], "result.best.json"), r_best, indent=2, compact=False)
 
-    # def make_results(cls, raxml_results, garli_results, working_dir, seqdb):
-    #     longest_time = raxml_results.longest_time + garli_results.longest_time
-    #     longest_time_s = RaxmlResult.time_str(longest_time)
-    #     module_logger.info('Longest time: ' + longest_time_s)
-    #     if raxml_results.overall_time and garli_results.overall_time:
-    #         overall_time = raxml_results.overall_time + garli_results.overall_time
-    #         overall_time_s = RaxmlResult.time_str(overall_time)
-    #         module_logger.info('Overall time: ' + overall_time_s)
-    #     else:
-    #         overall_time = None
-    #         overall_time_s = ""
+        with Path(self.state["working_dir"], "result.all.txt").open("w") as f:
+            f.write("Overall time: " + overall_time_s + "\n")
+            f.write("GARLI score : " + str(r_best["score"]) + "\n")
+            f.write("Tree        : " + str(r_best["tree"]) + "\n")
 
-    #     r_best = vars(garli_results.results[0])
-    #     r_best["longest_time"] = longest_time
-    #     r_best["longest_time_s"] = longest_time_s
-    #     if overall_time:
-    #         r_best["overall_time"] = overall_time
-    #     if overall_time_s:
-    #         r_best["overall_time_s"] = overall_time_s
-    #     json.dumpf(Path(working_dir, "result.best.json"), r_best)
+        # from .raxml import RaxmlResults
+        # raxml_results = RaxmlResults.from_json(config=self.config, state=self.state, filepath=Path(self.state["working_dir"], "result.raxml.json"))
+        # results = {
+        #     " total": {
+        #         "longest_time": longest_time,
+        #         "longest_time_s": longest_time_s,
+        #         "overall_time": overall_time,
+        #         "overall_time_s": overall_time_s,
+        #         "tree": str(garli_results.results[0].tree),
+        #         "garli_score": garli_results.results[0].score,
+        #         },
+        #     "garli": [vars(r) for r in garli_results.results],
+        #     "raxml": [r if isinstance(r, dict) else vars(r) for r in raxml_results.results],
+        #     }
+        # json_m.write_json(Path(self.state["working_dir"], "result.all.json"), results, indent=2, compact=True)
 
-    #     with Path(working_dir, "result.all.txt").open("w") as f:
-    #         f.write("Longest time: " + longest_time_s + "\n")
-    #         if overall_time_s:
-    #             f.write("Overall time: " + overall_time_s + "\n")
-    #         f.write("GARLI score : " + str(r_best["score"]) + "\n")
-    #         f.write("Tree        : " + str(r_best["tree"]) + "\n")
-    #     results = {
-    #         " total": {
-    #             "longest_time": longest_time,
-    #             "longest_time_s": longest_time_s,
-    #             "overall_time": overall_time,
-    #             "overall_time_s": overall_time_s,
-    #             "tree": str(garli_results.results[0].tree),
-    #             "garli_score": garli_results.results[0].score,
-    #             },
-    #         "garli": [vars(r) for r in garli_results.results],
-    #         "raxml": [r if isinstance(r, dict) else vars(r) for r in raxml_results.results],
-    #         }
-    #     json.dumpf(Path(working_dir, "result.all.json"), results)
-
-    #     from .draw_tree import draw_tree
-    #     draw_tree(tree_file=r_best["tree"],
-    #               seqdb=seqdb,
-    #               output_file=Path(working_dir, "tree.pdf"),
-    #               title="{{virus_type}} GARLI-score: {} Time: {} ({})".format(r_best["score"], overall_time_s, longest_time_s),
-    #               pdf_width=1000, pdf_height=850
-    #               )
-    #     return results
+        # TODO
+        # convert best tree from newick to json
 
 # ----------------------------------------------------------------------
 

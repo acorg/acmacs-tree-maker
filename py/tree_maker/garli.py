@@ -129,7 +129,8 @@ class GarliResult (maker_base.Result):
 
     def __init__(self, best_tree):
         super().__init__()
-        self.read(best_tree)
+        if best_tree is not None:
+            self.read(best_tree)
 
     def read(self, best_tree):
         self.tree = str(best_tree)
@@ -163,6 +164,9 @@ class GarliResults (maker_base.Results):
 
     def tabbed_report_header(cls):
         return "{:^10s} {:^8s} {:^10s} {}".format("score", "time", "startscore", "tree")
+
+    def result_class(self):
+        return GarliResult
 
 # ----------------------------------------------------------------------
 

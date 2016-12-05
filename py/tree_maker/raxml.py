@@ -117,7 +117,8 @@ class RaxmlResult (maker_base.Result):
 
     def __init__(self, best_tree):
         super().__init__()
-        self.read(best_tree)
+        if best_tree is not None:
+            self.read(best_tree)
 
     def read(self, best_tree):
         self.tree = best_tree
@@ -194,6 +195,9 @@ class RaxmlResults (maker_base.Results):
             # f.write('dev.off()\n\n')
         subprocess.run(["Rscript", str(filepath)], stdout=subprocess.DEVNULL)
         module_logger.info('Plot {} generated'.format(filepath.with_suffix(".pdf")))
+
+    def result_class(self):
+        return RaxmlResult
 
 # ======================================================================
 ### Local Variables:

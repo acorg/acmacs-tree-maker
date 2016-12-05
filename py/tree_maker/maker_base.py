@@ -42,7 +42,7 @@ class Result:
 
     @classmethod
     def from_dict(cls, data):
-        r = cls()
+        r = cls(best_tree=None)
         for k, v in data.items():
             setattr(r, k, v)
         return r
@@ -88,17 +88,15 @@ class Results:
         data["results"] = [e.json() for e in data["results"]]
         json_m.write_json(filepath, data)
 
-    # @classmethod
-    # def from_json(cls, filepath :Path):
-    #     r = cls()
-    #     data = json.loadf(filepath)
-    #     for k, v in data.items():
-    #         setattr(r, k, v)
-    #     if getattr(r, "results", None) and isinstance(r.results[0], str):
-    #         r.results = []                # bug in output, ignore it
-    #     elif isinstance(r.results[0], dict):
-    #         r.results = [r.result_class().from_dict(result) for result in r.results]
-    #     return r
+    @classmethod
+    def from_json(cls, config, state, filepath :Path):
+        r = cls(config, state)
+        data = json_m.read_json(filepath)
+        for k, v in data.items():
+            setattr(r, k, v)
+        if isinstance(r.results[0], dict):
+            r.results = [r.result_class().from_dict(result) for result in r.results]
+        return r
 
 # ----------------------------------------------------------------------
 
