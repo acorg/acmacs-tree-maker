@@ -49,17 +49,24 @@ class RunnerBase:
         getattr(self, "on_state_" + self.state["state"])()
         return self
 
+    def wait(self):
+        while self.state["state"] != "completed":
+            self.step()
+        return self
+
+    def get_raxml(self):
+        from .raxml import Raxml
+        return Raxml(config=self.config)
+
 # ----------------------------------------------------------------------
 
 class RaxmlFirst (RunnerBase):
-    ""
 
     def on_state_init(self):
         return self.raxml_submit()
 
     def raxml_submit(self, submit=True):
-        from .raxml import Raxml
-        raxml = Raxml(config=self.config)
+        raxml = get_raxml()
         raxml.prepare(state=self.state)
         if submit:
             raxml.submit(state=self.state)
@@ -67,12 +74,26 @@ class RaxmlFirst (RunnerBase):
 # ----------------------------------------------------------------------
 
 class RaxmlSurvivedBestGarli (RaxmlFirst):
-    ""
+
+    def on_state_raxml_submitted(self, **kwargs):
+        raxml = get_raxml()
+        raxml.wait(state=self.state)
+        if not state["raxml"].get("overall_time"):
+            raxml.analyse_logs(state=self.state)
+        else:
+            raxml.make_results(state=self.state)
+            # self.garli_submit(self.raxml_results.best_tree())
 
 # ----------------------------------------------------------------------
 
 class RaxmlBestGarli (RaxmlFirst):
-    ""
+
+    def on_state_raxml_submitted(self, **kwargs):
+        raxml = get_raxml()
+        raxml.wait(state=self.state)
+        if state["raxml"].get("overall_time"):
+            raxml.make_results(state=self.state)
+            # self.garli_submit(self.raxml_results.best_tree())
 
 # ----------------------------------------------------------------------
 

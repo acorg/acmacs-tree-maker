@@ -136,7 +136,7 @@ def prepare_submission(program, program_args :list, description :str, current_di
         f.write(desc_s)
     desc_filename = desc_filename.resolve()
     module_logger.info('HTCondor desc {}'.format(desc_filename))
-    return desc_filename
+    return desc_filename, condor_log
 
 # ----------------------------------------------------------------------
 
