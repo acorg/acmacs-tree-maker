@@ -34,7 +34,7 @@ DIST = $(abspath dist)
 
 # ----------------------------------------------------------------------
 
-all: check-python install # $(DIST)/tree-convert #  install
+all: check-python $(DIST)/tree-convert #  install
 
 install: check-acmacsd-root install-tree-maker
 
