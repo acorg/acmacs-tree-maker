@@ -3,33 +3,18 @@
 #include <vector>
 #include <map>
 
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+
 #pragma GCC diagnostic push
-#ifdef __clang__
-#pragma GCC diagnostic ignored "-Wdeprecated"
-#pragma GCC diagnostic ignored "-Wdisabled-macro-expansion"
-#pragma GCC diagnostic ignored "-Wdocumentation"
-#pragma GCC diagnostic ignored "-Wdocumentation-unknown-command"
-#pragma GCC diagnostic ignored "-Wglobal-constructors"
-#pragma GCC diagnostic ignored "-Wextra-semi"
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wreserved-id-macro"
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#pragma GCC diagnostic ignored "-Wshadow"
-#pragma GCC diagnostic ignored "-Wundef"
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-// #pragma GCC diagnostic ignored "-Wexit-time-destructors"
-#endif
-
+#include "acmacs-base/boost-diagnostics.hh"
 #define BOOST_SPIRIT_X3_NO_FILESYSTEM 1
-
 #include "boost/spirit/home/x3.hpp"
 #include "boost/spirit/home/x3/support/ast/variant.hpp"
 #include "boost/spirit/home/x3/support/ast/position_tagged.hpp"
 #include "boost/spirit/home/x3/support/utility/error_reporting.hpp"
 #include <boost/spirit/home/x3/support/utility/annotate_on_success.hpp>
 #include "boost/fusion/include/adapt_struct.hpp"
-
 #pragma GCC diagnostic pop
 
 // ----------------------------------------------------------------------
@@ -46,7 +31,9 @@ namespace ast
     namespace x3 = boost::spirit::x3;
     struct Node;
 
-    struct NodeElement : public x3::variant<std::string, std::vector<Node>>
+    struct Label : public std::string {};
+
+    struct NodeElement : public x3::variant<Label, std::vector<Node>>
     {
         using base_type::base_type;
         using base_type::operator=;
@@ -54,6 +41,8 @@ namespace ast
 
     struct Node
     {
+        inline Node() : length(-1) {}
+
         NodeElement element;
         double length;
     };
@@ -87,7 +76,7 @@ namespace parser
         template <typename Iterator, typename Exception, typename Context> inline x3::error_handler_result on_error(Iterator& first, const Iterator& last, const Exception& x, const Context& context)
             {
                 auto& error_handler = x3::get<error_handler_tag>(context).get();
-                error_handler(x.where(), "Parsing failed, expecting: " + x.which() + " here:");
+                error_handler(x.where(), "ERROR: parsing failed, expecting: " + x.which() + " here:");
                 return x3::error_handler_result::fail;
             }
     };
@@ -131,6 +120,70 @@ namespace parser
 #pragma GCC diagnostic pop
 
 // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+
+#include "acmacs-base/json-writer.hh"
+
+static constexpr const char* TREE_JSON_DUMP_VERSION = "newick-tree-v1";
+
+class if_non_negative
+{
+ public:
+    inline if_non_negative(const char* key, double value) : mKey(key), mValue(value) {}
+
+    template <typename RW> friend inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const if_non_negative& data)
+        {
+            if (data.mValue >= 0.0)
+                writer << JsonObjectKey(data.mKey) << data.mValue;
+            return writer;
+        }
+
+ private:
+    const char* mKey;
+    double mValue;
+};
+
+template <typename RW> class NodeElementWriter
+{
+ public:
+    inline NodeElementWriter(JsonWriterT<RW>& aWriter) : mWriter(aWriter) {}
+
+    inline void operator()(const ast::Label& aLabel) const { mWriter << JsonObjectKey("n") << aLabel; }
+    inline void operator()(const std::vector<ast::Node>& aNodes) const { mWriter << JsonObjectKey("t") << aNodes; }
+
+ private:
+    JsonWriterT<RW>& mWriter;
+};
+
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const ast::NodeElement& node_element)
+{
+    boost::apply_visitor(NodeElementWriter<RW>{writer}, node_element);
+    return writer;
+}
+
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const ast::Node& node)
+{
+    return writer << StartObject
+            << node.element
+            << if_non_negative("l", node.length)
+            << EndObject;
+}
+
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const ast::Tree& tree)
+{
+    return writer << StartObject
+                  << JsonObjectKey("  version") << TREE_JSON_DUMP_VERSION
+                  << JsonObjectKey("tree") << static_cast<const ast::Node>(tree)
+                  << EndObject;
+}
+
+inline std::ostream& operator << (std::ostream& out, const ast::Tree& tree)
+{
+    return out << json(tree, "newick-tree", 1);
+}
+
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 
 int main()
 {
@@ -147,24 +200,18 @@ int main()
 
     bool success = phrase_parse(iter, input.end(), pp, boost::spirit::x3::ascii::space, tree);
 
+    int exit_code = 1;
     if (success) {
         if (iter != input.end()) {
-            error_handler(iter, "Error! Expecting end of input here: ");
+            error_handler(iter, "ERROR: expecting end of input here: ");
         }
         else {
-            std::cout << "-------------------------\n";
-            std::cout << "Parsing succeeded\n";
-              // std::cout << "got: " << my_tree << std::endl;
-            std::cout << "\n-------------------------\n";
+            std::cout << tree << std::endl;
+            exit_code = 0;
         }
     }
-    else {
-        std::cerr << "-------------------------\n";
-        std::cerr << "Parsing failed\n";
-        std::cerr << "-------------------------\n";
-    }
 
-    return 0;
+    return exit_code;
 }
 
 // ----------------------------------------------------------------------

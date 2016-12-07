@@ -6,7 +6,7 @@ MAKEFLAGS = -w
 
 # ----------------------------------------------------------------------
 
-TREE_CONVERT_SOURCES = tree-convert.cc
+TREE_NEWICK_TO_JSON_SOURCES = tree-newick-to-json.cc
 
 # ----------------------------------------------------------------------
 
@@ -34,20 +34,21 @@ DIST = $(abspath dist)
 
 # ----------------------------------------------------------------------
 
-all: check-python $(DIST)/tree-convert #  install
+all: check-python $(DIST)/tree-newick-to-json
 
-install: check-acmacsd-root install-tree-maker
+install: install-tree-maker
 
 # ----------------------------------------------------------------------
 
-$(DIST)/tree-convert: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_CONVERT_SOURCES)) | $(DIST)
+$(DIST)/tree-newick-to-json: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_SOURCES)) | $(DIST) check-acmacsd-root
 	g++ $(LDFLAGS) -o $@ $^
 
 # ----------------------------------------------------------------------
 
-install-tree-maker:
+install-tree-maker: $(DIST)/tree-newick-to-json | check-acmacsd-root
 	ln -sf $(abspath bin)/tree-* $(ACMACSD_ROOT)/bin
 	ln -sf $(abspath py)/* $(ACMACSD_ROOT)/py
+	ln -sf $(DIST)/tree-* $(ACMACSD_ROOT)/bin
 
 clean:
 
