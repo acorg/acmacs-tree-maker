@@ -57,10 +57,20 @@ namespace ast
         NodeElement element;
         double length;
     };
+
+    struct Tree : public Node
+    {
+    };
 }
 
 BOOST_FUSION_ADAPT_STRUCT(
     ast::Node,
+    (ast::NodeElement, element)
+    (double, length)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    ast::Tree,
     (ast::NodeElement, element)
     (double, length)
 )
@@ -74,30 +84,12 @@ namespace parser
     class error_handler_base
     {
      public:
-        inline error_handler_base()
-            : id_map{{"tree", "Tree"}, {"node", "Node"}, {"node_element", "Node element"}}
-            {
-            }
-
         template <typename Iterator, typename Exception, typename Context> inline x3::error_handler_result on_error(Iterator& first, const Iterator& last, const Exception& x, const Context& context)
             {
-                std::cerr << "!!!on_error" << std::endl;
-                std::string which = x.which();
-                try {
-                    which = id_map.at(which);
-                }
-                catch (std::out_of_range&) {
-                }
-
-                const std::string message = "Error! Expecting: " + which + " here:";
                 auto& error_handler = x3::get<error_handler_tag>(context).get();
-                std::cerr << "EEE " << message << std::endl;
-                error_handler(x.where(), message);
+                error_handler(x.where(), "Parsing failed, expecting: " + x.which() + " here:");
                 return x3::error_handler_result::fail;
             }
-
-     private:
-        std::map<std::string, std::string> id_map;
     };
 }
 
@@ -106,24 +98,28 @@ namespace parser
     namespace x3 = boost::spirit::x3;
     using x3::ascii::char_;
 
+    struct NodeElement;
+    struct Node;
+    struct Tree;
+
+    x3::rule<NodeElement, ast::NodeElement> const node_element = "node_element";
+    x3::rule<Node, ast::Node> const node = "node";
+    x3::rule<Tree, ast::Tree> const tree = "tree";
+
+    const auto label = x3::lexeme[+(char_ - char_(" \n:(),;"))];
+    const auto branch_length = ':' > x3::double_;
+
+    auto const node_element_def = label | ('(' > (node % ',') > ')');
+    auto const node_def = node_element > -branch_length;
+    auto const tree_def = node > ';';
+
+    BOOST_SPIRIT_DEFINE(node_element, node, tree);
+
     struct NodeElement : x3::annotate_on_success, error_handler_base {};
     struct Node : x3::annotate_on_success, error_handler_base {};
     struct Tree : x3::annotate_on_success, error_handler_base {};
 
-    x3::rule<NodeElement, ast::NodeElement> const node_element = "node_element";
-    x3::rule<Node, ast::Node> const node = "node";
-    x3::rule<Tree, ast::Node> const tree = "tree";
-
-    const auto label = x3::lexeme[+(char_ - char_(" \n:(),;"))];
-    const auto branch_length = ':' >> x3::double_;
-
-    auto const node_element_def = label | ('(' >> (node % ',') >> ')');
-    auto const node_def = node_element >> -branch_length;
-    auto const tree_def = node >> ';';
-
-    BOOST_SPIRIT_DEFINE(node_element, node, tree);
-
-    typedef x3::rule<Tree, ast::Node> tree_type;
+    typedef x3::rule<Tree, ast::Tree> tree_type;
     BOOST_SPIRIT_DECLARE(tree_type);
 
     typedef x3::phrase_parse_context<x3::ascii::space_type>::type phrase_context_type;
@@ -139,16 +135,16 @@ namespace parser
 int main()
 {
     namespace x3 = boost::spirit::x3;
-    ast::Node tree;
-      // ast::Node node;
+    ast::Tree tree;
 
     std::cin.unsetf(std::ios::skipws);
     std::string input(std::istream_iterator<char>{std::cin}, std::istream_iterator<char>{});
 
-    parser::error_handler<std::string::const_iterator> error_handler(input.begin(), input.end(), std::cerr, "input");
+    auto iter = input.begin();
+    parser::error_handler<std::string::const_iterator> error_handler{iter, input.end(), std::cerr}; //, "input"};
+
     auto const pp = x3::with<parser::error_handler_tag>(std::ref(error_handler))[parser::tree];
 
-    auto iter = input.begin();
     bool success = phrase_parse(iter, input.end(), pp, boost::spirit::x3::ascii::space, tree);
 
     if (success) {
@@ -163,13 +159,11 @@ int main()
         }
     }
     else {
-        error_handler(iter, "Failed: ");
-        std::cout << "-------------------------\n";
-        std::cout << "Parsing failed\n";
-        std::cout << "-------------------------\n";
+        std::cerr << "-------------------------\n";
+        std::cerr << "Parsing failed\n";
+        std::cerr << "-------------------------\n";
     }
 
-    std::cout << "Bye... :-) \n\n";
     return 0;
 }
 
