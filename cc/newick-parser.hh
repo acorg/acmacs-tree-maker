@@ -1,8 +1,6 @@
 #pragma once
 
-#include "tree.hh"
-
-// ----------------------------------------------------------------------
+#include <iostream>
 
 #pragma GCC diagnostic push
 #include "acmacs-base/boost-diagnostics.hh"
@@ -11,6 +9,8 @@
 #include "boost/spirit/home/x3/support/utility/error_reporting.hpp"
 #include "boost/spirit/home/x3/support/utility/annotate_on_success.hpp"
 #pragma GCC diagnostic pop
+
+#include "tree.hh"
 
 // ----------------------------------------------------------------------
 
@@ -65,6 +65,26 @@ namespace parser
 }
 
 #pragma GCC diagnostic pop
+
+// ----------------------------------------------------------------------
+
+class NewickImportFailed : public std::exception {};
+
+inline void import_newick(std::string input, ast::Tree& tree)
+{
+    namespace x3 = boost::spirit::x3;
+    auto iter = input.begin();
+    parser::error_handler<std::string::const_iterator> error_handler{iter, input.end(), std::cerr}; //, "input"};
+
+    auto const pp = x3::with<parser::error_handler_tag>(std::ref(error_handler))[parser::tree];
+
+    if (!phrase_parse(iter, input.end(), pp, x3::ascii::space, tree))
+        throw NewickImportFailed{};
+    if (iter != input.end()) {
+        error_handler(iter, "ERROR: expecting end of input here: ");
+        throw NewickImportFailed{};
+    }
+}
 
 // ----------------------------------------------------------------------
 /// Local Variables:
