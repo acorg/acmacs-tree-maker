@@ -6,7 +6,7 @@
 import logging; module_logger = logging.getLogger(__name__)
 from pathlib import Path
 from . import config as config_m
-from acmacs_base import json as json_m
+from acmacs_base import json as json_m, files
 
 # ----------------------------------------------------------------------
 
@@ -67,6 +67,10 @@ class RunnerBase:
         getattr(self, "on_state_" + self.state["state"])()
         return self
 
+    def on_state_init(self):
+        # get outgroup from fasta
+        self.state["outgroup"] = open(self.config["source"]).readline().strip()[1:]
+
     def on_state_completed(self):
         module_logger.info('Completed')
 
@@ -103,6 +107,7 @@ class RunnerBase:
 class RaxmlGarli (RunnerBase):
 
     def on_state_init(self):
+        super().on_state_init()
         return self.raxml_submit()
 
     def on_state_raxml_done(self, **kwargs):
@@ -145,8 +150,12 @@ class RaxmlGarli (RunnerBase):
         #     }
         # json_m.write_json(Path(self.state["working_dir"], "result.all.json"), results, indent=2, compact=True)
 
-        # TODO
         # convert best tree from newick to json
+        import tree_newick_to_json
+        tree = tree_newick_to_json.Tree()
+        tree_newick_to_json.import_newick(open(r_best["tree"]).read(), tree)
+        j = tree_newick_to_json.json(tree)
+        files.write_binary(Path(self.state["working_dir"], "tree.json.xz"), j)
 
 # ----------------------------------------------------------------------
 
