@@ -15,9 +15,9 @@
 // ----------------------------------------------------------------------
 
 #pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter" // for clang and gcc 6.2
 #ifdef __clang__
 #pragma GCC diagnostic ignored "-Wglobal-constructors"
-#pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
 namespace parser
@@ -64,8 +64,6 @@ namespace parser
     BOOST_SPIRIT_INSTANTIATE(tree_type, std::string::const_iterator, context_type);
 }
 
-#pragma GCC diagnostic pop
-
 // ----------------------------------------------------------------------
 
 class NewickImportFailed : public std::exception {};
@@ -85,6 +83,8 @@ inline void import_newick(std::string input, ast::Tree& tree)
         throw NewickImportFailed{};
     }
 }
+
+#pragma GCC diagnostic pop
 
 // ----------------------------------------------------------------------
 /// Local Variables:

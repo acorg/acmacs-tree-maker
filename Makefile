@@ -63,6 +63,10 @@ install-tree-maker: $(DIST)/tree-newick-to-json $(DIST)/tree_newick_to_json$(PYT
 	ln -sf $(DIST)/tree_newick_to_json$(PYTHON_MODULE_SUFFIX) $(ACMACSD_ROOT)/py
 
 clean:
+	rm -rf $(DIST) $(BUILD)/*.o $(BUILD)/*.d
+
+distclean: clean
+	rm -rf $(BUILD)
 
 # ----------------------------------------------------------------------
 
