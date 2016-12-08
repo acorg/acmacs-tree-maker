@@ -32,11 +32,9 @@ class Raxml (maker_base.MakerBase):
             "run_ids": ["{}.{:04d}".format(run_id, run_no) for run_no in range(num_runs)],
             }
         general_args = ["-s", self.config["source"], "-w", state["raxml"]["output_dir"], "-m", state["raxml"]["model"], "-e", str(self.config["raxml_model_optimization_precision"]),
-                            "-T", "1", "-N", "1"] + self.default_args
+                            "-N", "1", "-o", state["outgroup"]] + self.default_args   # "-T", "1"
         # if source_tree is not None:
         #     general_args += ["-t", str(source_tree)]
-        # if outgroups:
-        #     general_args += ["-o", ",".join(outgroups)]
         state["raxml"]["submitted_tasks"] = state["raxml"]["survived_tasks"] = len(state["raxml"]["run_ids"])
         args = [(general_args + ["-n", ri, "-p", str(self.random_seed())]) for ri in state["raxml"]["run_ids"]]
         state["raxml"]["desc"], state["raxml"]["condor_log"] = htcondor.prepare_submission(

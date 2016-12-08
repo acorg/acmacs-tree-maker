@@ -58,8 +58,8 @@ class Garli (maker_base.MakerBase):
 
     sGreat = re.compile(r"\s*great\s+>=\s+(\d+)\s+MB", re.I)
 
-    def find_memory_requirements(self, state): # source, source_tree, outgroup, output_dir, attachmentspertaxon, randseed, genthreshfortopoterm, searchreps, stoptime, strip_comments):
-        conf_file = self._make_conf(run_id="find_memory_requirements", state=state) # source=source, source_tree=source_tree, outgroup=outgroup, output_dir=output_dir.resolve(), availablememory=2000, attachmentspertaxon=attachmentspertaxon, randseed=self.random_seed(), genthreshfortopoterm=genthreshfortopoterm, searchreps=searchreps, stoptime=1, strip_comments=strip_comments)
+    def find_memory_requirements(self, state):
+        conf_file = self._make_conf(run_id="find_memory_requirements", state=state)
         start = time_m.time()
         proc = subprocess.Popen([state["garli"]["program"], str(conf_file.resolve())], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         availablememory = None # default, in case the code below fails or times out
