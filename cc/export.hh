@@ -64,6 +64,11 @@ inline std::ostream& operator << (std::ostream& out, const ast::Tree& tree)
     return out << json(tree, "newick-tree", 1);
 }
 
+inline std::string tree_to_json(const ast::Tree& tree)
+{
+    return json(tree, "newick-tree", 1);
+}
+
 // ----------------------------------------------------------------------
 /// Local Variables:
 /// eval: (if (fboundp 'eu-rename-buffer) (eu-rename-buffer))
