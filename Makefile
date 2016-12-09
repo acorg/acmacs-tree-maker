@@ -68,6 +68,8 @@ clean:
 distclean: clean
 	rm -rf $(BUILD)
 
+-include $(BUILD)/*.d
+
 # ----------------------------------------------------------------------
 
 $(BUILD)/%.o: cc/%.cc | $(BUILD)
