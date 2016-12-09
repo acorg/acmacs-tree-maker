@@ -1,0 +1,16 @@
+{"_":"-*- js-indent-level: 1 -*-",
+ "  version": "newick-tree-v1",
+ "tree": {
+  "l": <edge-length: double>,
+  "t": [
+   {
+    "l": ...,
+    "t": ...
+   },
+   {
+    "l": ...,
+    "n": "seq_id"
+   }
+   ]
+ }
+}
