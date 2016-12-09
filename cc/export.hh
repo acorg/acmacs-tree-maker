@@ -8,23 +8,6 @@
 
 static constexpr const char* TREE_JSON_DUMP_VERSION = "newick-tree-v1";
 
-class if_non_negative
-{
- public:
-    inline if_non_negative(const char* key, double value) : mKey(key), mValue(value) {}
-
-    template <typename RW> friend inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const if_non_negative& data)
-        {
-            if (data.mValue >= 0.0)
-                writer << JsonObjectKey(data.mKey) << data.mValue;
-            return writer;
-        }
-
- private:
-    const char* mKey;
-    double mValue;
-};
-
 template <typename RW> class NodeElementWriter
 {
  public:
@@ -59,14 +42,14 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << EndObject;
 }
 
-inline std::ostream& operator << (std::ostream& out, const ast::Tree& tree)
-{
-    return out << json(tree, "newick-tree", 1);
-}
-
 inline std::string tree_to_json(const ast::Tree& tree)
 {
-    return json(tree, "newick-tree", 1);
+    return json(tree, TREE_JSON_DUMP_VERSION, 1);
+}
+
+inline std::ostream& operator << (std::ostream& out, const ast::Tree& tree)
+{
+    return out << tree_to_json(tree);
 }
 
 // ----------------------------------------------------------------------
