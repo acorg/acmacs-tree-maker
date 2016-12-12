@@ -46,6 +46,8 @@ all: check-python $(DIST)/tree-newick-to-json $(DIST)/tree_newick_to_json$(PYTHO
 
 install: install-tree-maker
 
+test: test-newick-to-json
+
 # ----------------------------------------------------------------------
 
 $(DIST)/tree-newick-to-json: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_SOURCES)) | $(DIST) check-acmacsd-root
@@ -61,6 +63,9 @@ install-tree-maker: $(DIST)/tree-newick-to-json $(DIST)/tree_newick_to_json$(PYT
 	ln -sf $(abspath py)/* $(ACMACSD_ROOT)/py
 	ln -sf $(DIST)/tree-* $(ACMACSD_ROOT)/bin
 	ln -sf $(DIST)/tree_newick_to_json$(PYTHON_MODULE_SUFFIX) $(ACMACSD_ROOT)/py
+
+test-newick-to-json: $(DIST)/tree-newick-to-json
+	$(DIST)/tree-newick-to-json <test/newick.phy | diff test/newick.json -
 
 clean:
 	rm -rf $(DIST) $(BUILD)/*.o $(BUILD)/*.d
