@@ -32,7 +32,8 @@ PYTHON_VERSION = $(shell python3 -c 'import sys; print("{0.major}.{0.minor}".for
 PYTHON_CONFIG = python$(PYTHON_VERSION)-config
 PYTHON_MODULE_SUFFIX = $(shell $(PYTHON_CONFIG) --extension-suffix)
 PYTHON_LD_LIB = $$(pkg-config --libs liblzma) $$($(PYTHON_CONFIG) --ldflags | sed -E 's/-Wl,-stack_size,[0-9]+//')
-
+LIB_DIR = $(ACMACSD_ROOT)/lib
+LD_LIBS = -L$(LIB_DIR) -lacmacsbase -lboost_filesystem -lboost_system
 PKG_INCLUDES = $$(pkg-config --cflags liblzma) $$($(PYTHON_CONFIG) --includes)
 
 # ----------------------------------------------------------------------
@@ -51,10 +52,10 @@ test: test-newick-to-json
 # ----------------------------------------------------------------------
 
 $(DIST)/tree-newick-to-json: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_SOURCES)) | $(DIST) check-acmacsd-root
-	g++ $(LDFLAGS) -o $@ $^
+	g++ $(LDFLAGS) -o $@ $^ $(LD_LIBS)
 
 $(DIST)/tree_newick_to_json$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_PY_SOURCES)) | $(DIST) check-acmacsd-root
-	g++ -shared $(LDFLAGS) -o $@ $^ $(PYTHON_LD_LIB)
+	g++ -shared $(LDFLAGS) -o $@ $^ $(LD_LIBS) $(PYTHON_LD_LIB)
 
 # ----------------------------------------------------------------------
 
