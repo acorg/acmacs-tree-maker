@@ -66,7 +66,7 @@ install-tree-maker: $(DIST)/tree-newick-to-json $(DIST)/tree_newick_to_json$(PYT
 	ln -sf $(DIST)/tree_newick_to_json$(PYTHON_MODULE_SUFFIX) $(ACMACSD_ROOT)/py
 
 test-newick-to-json: $(DIST)/tree-newick-to-json
-	$(DIST)/tree-newick-to-json <test/newick.phy | diff test/newick.json -
+	env LD_LIBRARY_PATH=$(LIB_DIR) $(DIST)/tree-newick-to-json <test/newick.phy | diff test/newick.json -
 
 clean:
 	rm -rf $(DIST) $(BUILD)/*.o $(BUILD)/*.d
