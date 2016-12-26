@@ -43,9 +43,6 @@ from tree_maker import config as config_m, maker as maker_m
 
 # ----------------------------------------------------------------------
 
-
-# ----------------------------------------------------------------------
-
 sCommands = {
     "init": config_m.init,
     "step": maker_m.step,

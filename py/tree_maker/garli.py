@@ -38,6 +38,7 @@ class Garli (maker_base.MakerBase):
             program=state["garli"]["program"],
             program_args=[[c] for c in conf_files],
             description="Garli {run_id} {num_runs}".format(run_id=run_id, num_runs=num_runs,),
+            request_memory=state["garli"]["availablememory"],
             current_dir=output_dir,
             capture_stdout=True, email=self.config["email"], notification="Error", machines=self.config["machines"] or None)
         state["state"] = "garli_submission_prepared"
