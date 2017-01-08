@@ -66,6 +66,7 @@ with timeit(sys.argv[0]):
         parser.add_argument('command', nargs=1, help="command to perform: " + " ".join(sCommands))
         parser.add_argument('--dir', action='store', dest="working_dir", default=".", help='Path to the working directory.')
         parser.add_argument('--config', action='store', dest="config_file_name", default="tree-maker.config", help='Config file name (without directory) in the working directory.')
+        parser.add_argument('--no-email', action='store_false', dest="email", default=True, help='Do not send email on making tree completion/failure.')
 
         parser.add_argument('-d', '--debug', action='store_const', dest='loglevel', const=logging.DEBUG, default=logging.INFO, help='Enable debugging output.')
         args = parser.parse_args()

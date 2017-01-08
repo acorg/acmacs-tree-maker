@@ -3,9 +3,10 @@
 # license.
 # ======================================================================
 
+import sys, traceback
 import logging; module_logger = logging.getLogger(__name__)
 from pathlib import Path
-from . import config as config_m
+from . import config as config_m, email
 from acmacs_base import json as json_m, files
 
 # ----------------------------------------------------------------------
@@ -38,9 +39,16 @@ def wait(args):
             }
         json_m.write_json(path=state_filename, data=state, indent=2, compact=True)
     runner = create_runner(config=config, state=state)
-    while state["state"] != "completed":
-        runner.step()
-        json_m.write_json(path=state_filename, data=state, indent=2, compact=True)
+    try:
+        while state["state"] != "completed":
+            runner.step()
+            json_m.write_json(path=state_filename, data=state, indent=2, compact=True)
+        if args.email and config.get("email"):
+            email.send(to=config["email"], subject="{} completed in {}".format(sys.argv[0], args.working_dir), body="{} completed in\n{}".format(sys.argv[0], args.working_dir))
+    except Exception as err:
+        if args.email and config.get("email"):
+            email.send(to=config["email"], subject="{} FAILED in {}".format(sys.argv[0], args.working_dir), body="{} FAILED in\n{}\n\n{}\n\n{}".format(sys.argv[0], args.working_dir, err, traceback.format_exc()))
+        raise
 
 # ----------------------------------------------------------------------
 
