@@ -6,8 +6,8 @@
 import sys, traceback
 import logging; module_logger = logging.getLogger(__name__)
 from pathlib import Path
-from . import config as config_m, email
-from acmacs_base import json as json_m, files
+from . import config as config_m
+from acmacs_base import json as json_m, files, email
 
 # ----------------------------------------------------------------------
 
