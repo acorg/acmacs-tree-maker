@@ -44,10 +44,10 @@ def wait(args):
             runner.step()
             json_m.write_json(path=state_filename, data=state, indent=2, compact=True)
         if args.email and config.get("email"):
-            email.send(to=config["email"], subject="{} completed in {}".format(sys.argv[0], args.working_dir), body="{} completed in\n{}".format(sys.argv[0], args.working_dir))
+            email.send(to=config["email"], subject="{} completed in {}".format(sys.argv[0], Path(args.working_dir).resolve()), body="{} completed in\n{}".format(sys.argv[0], Path(args.working_dir).resolve()))
     except Exception as err:
         if args.email and config.get("email"):
-            email.send(to=config["email"], subject="{} FAILED in {}".format(sys.argv[0], args.working_dir), body="{} FAILED in\n{}\n\n{}\n\n{}".format(sys.argv[0], args.working_dir, err, traceback.format_exc()))
+            email.send(to=config["email"], subject="{} FAILED in {}".format(sys.argv[0], Path(args.working_dir).resolve()), body="{} FAILED in\n{}\n\n{}\n\n{}".format(sys.argv[0], Path(args.working_dir).resolve(), err, traceback.format_exc()))
         raise
 
 # ----------------------------------------------------------------------
