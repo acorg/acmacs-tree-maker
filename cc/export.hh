@@ -2,6 +2,16 @@
 
 #include <iostream>
 
+namespace json_writer
+{
+    template <typename RW> class writer;
+}
+namespace jsw = json_writer;
+
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>&, const ast::NodeElement&);
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>&, const ast::Node&);
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>&, const ast::Tree&);
+
 #include "acmacs-base/json-writer.hh"
 
 // ----------------------------------------------------------------------
@@ -11,40 +21,40 @@ static constexpr const char* TREE_JSON_DUMP_VERSION = "newick-tree-v1";
 template <typename RW> class NodeElementWriter
 {
  public:
-    inline NodeElementWriter(JsonWriterT<RW>& aWriter) : mWriter(aWriter) {}
+    inline NodeElementWriter(jsw::writer<RW>& aWriter) : mWriter(aWriter) {}
 
-    inline void operator()(const ast::Label& aLabel) const { mWriter << JsonObjectKey("n") << aLabel; }
-    inline void operator()(const std::vector<ast::Node>& aNodes) const { mWriter << JsonObjectKey("t") << aNodes; }
+    inline void operator()(const ast::Label& aLabel) const { mWriter << jsw::key("n") << aLabel; }
+    inline void operator()(const std::vector<ast::Node>& aNodes) const { mWriter << jsw::key("t") << aNodes; }
 
  private:
-    JsonWriterT<RW>& mWriter;
+    jsw::writer<RW>& mWriter;
 };
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const ast::NodeElement& node_element)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const ast::NodeElement& node_element)
 {
     boost::apply_visitor(NodeElementWriter<RW>{writer}, node_element);
     return writer;
 }
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const ast::Node& node)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const ast::Node& node)
 {
-    return writer << StartObject
+    return writer << jsw::start_object
             << node.element
-            << if_non_negative("l", node.length)
-            << EndObject;
+            << jsw::if_non_negative("l", node.length)
+            << jsw::end_object;
 }
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const ast::Tree& tree)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const ast::Tree& tree)
 {
-    return writer << StartObject
-                  << JsonObjectKey("  version") << TREE_JSON_DUMP_VERSION
-                  << JsonObjectKey("tree") << static_cast<const ast::Node>(tree)
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("  version") << TREE_JSON_DUMP_VERSION
+                  << jsw::key("tree") << static_cast<const ast::Node>(tree)
+                  << jsw::end_object;
 }
 
 inline std::string tree_to_json(const ast::Tree& tree)
 {
-    return json(tree, TREE_JSON_DUMP_VERSION, 1);
+    return jsw::json(tree, TREE_JSON_DUMP_VERSION, 1);
 }
 
 inline std::ostream& operator << (std::ostream& out, const ast::Tree& tree)
