@@ -5,9 +5,9 @@
 
 // ----------------------------------------------------------------------
 
-PYBIND11_PLUGIN(tree_newick_to_json)
+PYBIND11_MODULE(tree_newick_to_json, m)
 {
-    py::module m("tree_newick_to_json", "Importing newick tree plugin");
+    m.doc() = "Importing newick tree plugin";
 
     py::class_<ast::Tree>(m, "Tree")
             .def(py::init<>())
@@ -15,8 +15,6 @@ PYBIND11_PLUGIN(tree_newick_to_json)
 
     m.def("import_newick", &import_newick, py::arg("input"), py::arg("tree"));
     m.def("json", &tree_to_json, py::arg("tree"));
-
-    return m.ptr();
 }
 
 // ----------------------------------------------------------------------
