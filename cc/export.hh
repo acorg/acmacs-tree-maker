@@ -54,7 +54,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
 inline std::string tree_to_json(const ast::Tree& tree)
 {
-    return jsw::json(tree, TREE_JSON_DUMP_VERSION, 1);
+    return jsw::json(tree, 1);
 }
 
 inline std::ostream& operator << (std::ostream& out, const ast::Tree& tree)
