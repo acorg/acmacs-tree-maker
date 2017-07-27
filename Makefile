@@ -11,16 +11,7 @@ TREE_NEWICK_TO_JSON_PY_SOURCES = tree-newick-to-json-py.cc
 
 # ----------------------------------------------------------------------
 
-CLANG = $(shell if g++ --version 2>&1 | grep -i llvm >/dev/null; then echo Y; else echo N; fi)
-ifeq ($(CLANG),Y)
-  WEVERYTHING = -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded
-  WARNINGS = -Wno-weak-vtables # -Wno-padded
-  STD = c++14
-else
-  WEVERYTHING = -Wall -Wextra
-  WARNINGS =
-  STD = c++14
-endif
+include $(ACMACSD_ROOT)/share/Makefile.g++
 
 # -fvisibility=hidden and -flto make resulting lib smaller (pybind11) but linking is much slower
 OPTIMIZATION = -O3 #-fvisibility=hidden -flto
@@ -52,10 +43,10 @@ test: test-newick-to-json
 # ----------------------------------------------------------------------
 
 $(DIST)/tree-newick-to-json: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_SOURCES)) | $(DIST) check-acmacsd-root
-	g++ $(LDFLAGS) -o $@ $^ $(LD_LIBS)
+	$(GXX) $(LDFLAGS) -o $@ $^ $(LD_LIBS)
 
 $(DIST)/tree_newick_to_json$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_PY_SOURCES)) | $(DIST) check-acmacsd-root
-	g++ -shared $(LDFLAGS) -o $@ $^ $(LD_LIBS) $(PYTHON_LD_LIB)
+	$(GXX) -shared $(LDFLAGS) -o $@ $^ $(LD_LIBS) $(PYTHON_LD_LIB)
 
 # ----------------------------------------------------------------------
 
@@ -80,7 +71,7 @@ distclean: clean
 
 $(BUILD)/%.o: cc/%.cc | $(BUILD)
 	@echo $<
-	@g++ $(CXXFLAGS) -c -o $@ $<
+	@$(GXX) $(CXXFLAGS) -c -o $@ $<
 
 # ----------------------------------------------------------------------
 
