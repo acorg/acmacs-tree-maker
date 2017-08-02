@@ -43,10 +43,10 @@ test: test-newick-to-json
 # ----------------------------------------------------------------------
 
 $(DIST)/tree-newick-to-json: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_SOURCES)) | $(DIST) check-acmacsd-root
-	$(GXX) $(LDFLAGS) -o $@ $^ $(LD_LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LD_LIBS)
 
 $(DIST)/tree_newick_to_json$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_PY_SOURCES)) | $(DIST) check-acmacsd-root
-	$(GXX) -shared $(LDFLAGS) -o $@ $^ $(LD_LIBS) $(PYTHON_LD_LIB)
+	$(CXX) -shared $(LDFLAGS) -o $@ $^ $(LD_LIBS) $(PYTHON_LD_LIB)
 
 # ----------------------------------------------------------------------
 
@@ -71,7 +71,7 @@ distclean: clean
 
 $(BUILD)/%.o: cc/%.cc | $(BUILD)
 	@echo $<
-	@$(GXX) $(CXXFLAGS) -c -o $@ $<
+	@$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 # ----------------------------------------------------------------------
 
