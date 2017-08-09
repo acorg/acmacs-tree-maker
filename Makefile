@@ -22,10 +22,10 @@ LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 PYTHON_VERSION = $(shell python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
 PYTHON_CONFIG = python$(PYTHON_VERSION)-config
 PYTHON_MODULE_SUFFIX = $(shell $(PYTHON_CONFIG) --extension-suffix)
-PYTHON_LD_LIB = $$(pkg-config --libs liblzma) $$($(PYTHON_CONFIG) --ldflags | sed -E 's/-Wl,-stack_size,[0-9]+//')
+PYTHON_LD_LIB = $(shell pkg-config --libs liblzma) $(shell $(PYTHON_CONFIG) --ldflags | sed -E 's/-Wl,-stack_size,[0-9]+//')
 LIB_DIR = $(ACMACSD_ROOT)/lib
 LD_LIBS = -L$(LIB_DIR) -lacmacsbase -lboost_filesystem -lboost_system
-PKG_INCLUDES = $$(pkg-config --cflags liblzma) $$($(PYTHON_CONFIG) --includes)
+PKG_INCLUDES = $(shell pkg-config --cflags liblzma) $(shell $(PYTHON_CONFIG) --includes)
 
 # ----------------------------------------------------------------------
 
@@ -66,6 +66,8 @@ distclean: clean
 	rm -rf $(BUILD)
 
 -include $(BUILD)/*.d
+
+include $(ACMACSD_ROOT)/share/Makefile.rtags
 
 # ----------------------------------------------------------------------
 
