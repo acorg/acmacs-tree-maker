@@ -12,6 +12,7 @@ TREE_NEWICK_TO_JSON_PY_SOURCES = tree-newick-to-json-py.cc
 # ----------------------------------------------------------------------
 
 include $(ACMACSD_ROOT)/share/Makefile.g++
+include $(ACMACSD_ROOT)/share/Makefile.dist-build.vars
 
 # -fvisibility=hidden and -flto make resulting lib smaller (pybind11) but linking is much slower
 OPTIMIZATION = -O3 #-fvisibility=hidden -flto
@@ -26,11 +27,6 @@ PYTHON_LD_LIB = $(shell pkg-config --libs liblzma) $(shell $(PYTHON_CONFIG) --ld
 LIB_DIR = $(ACMACSD_ROOT)/lib
 LD_LIBS = -L$(LIB_DIR) -lacmacsbase -lboost_filesystem -lboost_system
 PKG_INCLUDES = $(shell pkg-config --cflags liblzma) $(shell $(PYTHON_CONFIG) --includes)
-
-# ----------------------------------------------------------------------
-
-BUILD = build
-DIST = $(abspath dist)
 
 # ----------------------------------------------------------------------
 
@@ -59,12 +55,6 @@ install-tree-maker: $(DIST)/tree-newick-to-json $(DIST)/tree_newick_to_json$(PYT
 test-newick-to-json: $(DIST)/tree-newick-to-json
 	env LD_LIBRARY_PATH=$(LIB_DIR) $(DIST)/tree-newick-to-json <test/newick.phy | diff test/newick.json -
 
-clean:
-	rm -rf $(DIST) $(BUILD)/*.o $(BUILD)/*.d
-
-distclean: clean
-	rm -rf $(BUILD)
-
 -include $(BUILD)/*.d
 
 include $(ACMACSD_ROOT)/share/Makefile.rtags
@@ -85,11 +75,7 @@ endif
 check-python:
 	@printf 'import sys\nif sys.version_info < (3, 5):\n print("Python 3.5 is required")\n exit(1)' | python3
 
-$(DIST):
-	mkdir -p $(DIST)
-
-$(BUILD):
-	mkdir -p $(BUILD)
+include $(ACMACSD_ROOT)/share/Makefile.dist-build.rules
 
 .PHONY: check-acmacsd-root check-python
 
