@@ -32,7 +32,7 @@ sDefault = {
     "garli_genthreshfortopoterm": 20000,
     "email": getpass.getuser(),
     "machines?": ["odette", "i19", "i20", "i21", "o16", "o17"],
-    "machines": ["odette", "i19", "i20", "i21", "o16", "o17"],
+    "machines": ["i20", "i21", "o16", "o17"],
     }
 
 # ----------------------------------------------------------------------
