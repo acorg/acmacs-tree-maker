@@ -15,9 +15,6 @@ TARGET_ROOT=$(shell if [ -f /Volumes/rdisk/ramdisk-id ]; then echo /Volumes/rdis
 include $(TARGET_ROOT)/share/Makefile.g++
 include $(TARGET_ROOT)/share/Makefile.dist-build.vars
 
-# -fvisibility=hidden and -flto make resulting lib smaller (pybind11) but linking is much slower
-OPTIMIZATION = -O3 #-fvisibility=hidden -flto
-PROFILE = # -pg
 CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WEVERYTHING) $(WARNINGS) -Icc -I$(AD_INCLUDE) $(PKG_INCLUDES)
 LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 
@@ -39,9 +36,11 @@ test: test-newick-to-json
 # ----------------------------------------------------------------------
 
 $(DIST)/tree-newick-to-json: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_SOURCES)) | $(DIST) check-acmacsd-root
+	@echo "LINK       " $@ # '<--' $^
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LD_LIBS)
 
 $(DIST)/tree_newick_to_json$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_PY_SOURCES)) | $(DIST) check-acmacsd-root
+	@echo "SHARED     " $@ # '<--' $^
 	$(CXX) -shared $(LDFLAGS) -o $@ $^ $(LD_LIBS) $(PYTHON_LD_LIB)
 
 # ----------------------------------------------------------------------
@@ -62,7 +61,7 @@ include $(AD_SHARE)/Makefile.rtags
 # ----------------------------------------------------------------------
 
 $(BUILD)/%.o: cc/%.cc | $(BUILD)
-	@echo $(CXX_NAME) $<
+	@echo $(CXX_NAME) $(OPTIMIZATION) $<
 	@$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 # ----------------------------------------------------------------------
