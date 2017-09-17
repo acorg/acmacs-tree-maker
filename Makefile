@@ -34,13 +34,21 @@ test: test-newick-to-json
 
 # ----------------------------------------------------------------------
 
-$(DIST)/tree-newick-to-json: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_SOURCES)) | $(DIST) check-acmacsd-root
+$(DIST)/tree-newick-to-json: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_SOURCES)) | $(DIST)
 	@echo "LINK       " $@ # '<--' $^
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LD_LIBS)
 
-$(DIST)/tree_newick_to_json$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_PY_SOURCES)) | $(DIST) check-acmacsd-root
+$(DIST)/tree_newick_to_json$(PYTHON_MODULE_SUFFIX): $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_PY_SOURCES)) | $(DIST)
 	@echo "SHARED     " $@ # '<--' $^
 	$(CXX) -shared $(LDFLAGS) -o $@ $^ $(LD_LIBS) $(PYTHON_LD_LIB)
+
+install-headers:
+
+# ----------------------------------------------------------------------
+
+-include $(BUILD)/*.d
+include $(ACMACSD_ROOT)/share/makefiles/Makefile.dist-build.rules
+include $(ACMACSD_ROOT)/share/makefiles/Makefile.rtags
 
 # ----------------------------------------------------------------------
 
@@ -52,12 +60,6 @@ install-tree-maker: $(DIST)/tree-newick-to-json $(DIST)/tree_newick_to_json$(PYT
 
 test-newick-to-json: $(DIST)/tree-newick-to-json
 	env LD_LIBRARY_PATH=$(AD_LIB) $(DIST)/tree-newick-to-json <test/newick.phy | diff test/newick.json -
-
-# ----------------------------------------------------------------------
-
--include $(BUILD)/*.d
-include $(ACMACSD_ROOT)/share/makefiles/Makefile.dist-build.rules
-include $(ACMACSD_ROOT)/share/makefiles/Makefile.rtags
 
 # ======================================================================
 ### Local Variables:
