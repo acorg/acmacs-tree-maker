@@ -42,8 +42,6 @@ $(DIST)/tree_newick_to_json$(PYTHON_MODULE_SUFFIX): $(patsubst %.cc,$(BUILD)/%.o
 	@echo "SHARED     " $@ # '<--' $^
 	$(CXX) -shared $(LDFLAGS) -o $@ $^ $(LD_LIBS) $(PYTHON_LD_LIB)
 
-install-headers:
-
 # ----------------------------------------------------------------------
 
 -include $(BUILD)/*.d
