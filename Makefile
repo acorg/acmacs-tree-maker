@@ -1,5 +1,5 @@
 # -*- Makefile -*-
-# Eugene Skepner 2016
+# Eugene Skepner 2017
 # ======================================================================
 
 MAKEFLAGS = -w
@@ -11,11 +11,10 @@ TREE_NEWICK_TO_JSON_PY_SOURCES = tree-newick-to-json-py.cc
 
 # ----------------------------------------------------------------------
 
-TARGET_ROOT=$(shell if [ -f /Volumes/rdisk/ramdisk-id ]; then echo /Volumes/rdisk/AD; else echo $(ACMACSD_ROOT); fi)
-include $(TARGET_ROOT)/share/Makefile.g++
-include $(TARGET_ROOT)/share/Makefile.dist-build.vars
+include $(ACMACSD_ROOT)/share/makefiles/Makefile.g++
+include $(ACMACSD_ROOT)/share/makefiles/Makefile.dist-build.vars
 
-CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WEVERYTHING) $(WARNINGS) -Icc -I$(AD_INCLUDE) $(PKG_INCLUDES)
+CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WARNINGS) -Icc -I$(AD_INCLUDE) $(PKG_INCLUDES)
 LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 
 PYTHON_VERSION = $(shell python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
@@ -27,7 +26,7 @@ PKG_INCLUDES = $(shell pkg-config --cflags liblzma) $(shell $(PYTHON_CONFIG) --i
 
 # ----------------------------------------------------------------------
 
-all: check-python $(DIST)/tree-newick-to-json $(DIST)/tree_newick_to_json$(PYTHON_MODULE_SUFFIX)
+all: $(DIST)/tree-newick-to-json $(DIST)/tree_newick_to_json$(PYTHON_MODULE_SUFFIX)
 
 install: install-tree-maker
 
@@ -54,19 +53,11 @@ install-tree-maker: $(DIST)/tree-newick-to-json $(DIST)/tree_newick_to_json$(PYT
 test-newick-to-json: $(DIST)/tree-newick-to-json
 	env LD_LIBRARY_PATH=$(AD_LIB) $(DIST)/tree-newick-to-json <test/newick.phy | diff test/newick.json -
 
+# ----------------------------------------------------------------------
+
 -include $(BUILD)/*.d
-
-include $(AD_SHARE)/Makefile.rtags
-
-# ----------------------------------------------------------------------
-
-$(BUILD)/%.o: cc/%.cc | $(BUILD)
-	@echo $(CXX_NAME) $(OPTIMIZATION) $<
-	@$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-# ----------------------------------------------------------------------
-
-include $(AD_SHARE)/Makefile.dist-build.rules
+include $(ACMACSD_ROOT)/share/makefiles/Makefile.dist-build.rules
+include $(ACMACSD_ROOT)/share/makefiles/Makefile.rtags
 
 # ======================================================================
 ### Local Variables:
