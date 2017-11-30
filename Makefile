@@ -52,7 +52,7 @@ include $(ACMACSD_ROOT)/share/makefiles/Makefile.rtags
 
 $(DIST)/%: $(BUILD)/%.o
 	@printf "%-16s %s\n" "LINK" $@
-	@$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+	@$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(AD_RPATH)
 
 $(TREE_NEWICK_TO_JSON_PY_LIB): $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_PY_SOURCES)) | $(DIST)
 	@printf "%-16s %s\n" "SHARED" $@
