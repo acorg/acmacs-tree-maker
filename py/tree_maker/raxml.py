@@ -40,6 +40,7 @@ class Raxml (maker_base.MakerBase):
         state["raxml"]["desc"], state["raxml"]["condor_log"] = htcondor.prepare_submission(
             program=state["raxml"]["program"],
             program_args=args,
+            priority=-10,
             description="RAxML {run_id} {num_runs}".format(run_id=run_id, num_runs=num_runs,),
             current_dir=output_dir,
             capture_stdout=True, email=self.config["email"], notification="Error", machines=self.config["machines"] or None)

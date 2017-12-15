@@ -92,13 +92,14 @@ class Job:
 
 # ----------------------------------------------------------------------
 
-def prepare_submission(program, program_args :list, description :str, current_dir :Path, request_memory=None, capture_stdout=False, email=None, notification="Error", machines :list = None):
+def prepare_submission(program, program_args :list, description :str, current_dir :Path, request_memory=None, capture_stdout=False, email=None, notification="Error", machines :list = None, priority :int = 0):
     current_dir = Path(current_dir).resolve()
     current_dir.chmod(0o777)        # to allow remote processes runinnig under user nobody to write files
     condor_log = Path(current_dir, "condor.log")
     desc = [
         ["universe", "vanilla"],
         ["executable", str(Path(program).resolve())],
+        ["priority", str(priority)],
         ["should_transfer_files", "NO"],
         ["notify_user", email or ""],
         ["notification", notification if email else "Never"],
