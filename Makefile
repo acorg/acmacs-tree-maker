@@ -40,7 +40,7 @@ install: $(TARGETS)
 	ln -sf $(DIST)/tree-* $(AD_BIN)
 
 test: $(TARGETS)
-	env LD_LIBRARY_PATH=$(AD_LIB):$(LD_LIBRARY_PATH) $(DIST)/tree-newick-to-json <test/newick.phy | diff test/newick.json -
+	if [ "$$(uname)" == "Darwin" ]; then $(DIST)/tree-newick-to-json <test/newick.phy | diff test/newick.json -; fi
 
 # ----------------------------------------------------------------------
 
