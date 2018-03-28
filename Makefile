@@ -26,7 +26,7 @@ include $(ACMACSD_ROOT)/share/makefiles/Makefile.dist-build.vars
 CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WARNINGS) -Icc -I$(AD_INCLUDE) $(PKG_INCLUDES)
 LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 
-LDLIBS = $(AD_LIB)/$(call shared_lib_name,libacmacsbase,1,0)
+LDLIBS = $(AD_LIB)/$(call shared_lib_name,libacmacsbase,1,0) $(CXX_LIB)
 PKG_INCLUDES = $(shell pkg-config --cflags liblzma) $(PYTHON_INCLUDES)
 
 # ----------------------------------------------------------------------
