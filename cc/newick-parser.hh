@@ -59,7 +59,7 @@ namespace parser
     BOOST_SPIRIT_DECLARE(tree_type);
 
     typedef x3::phrase_parse_context<x3::ascii::space_type>::type phrase_context_type;
-    typedef x3::with_context<error_handler_tag, std::reference_wrapper<error_handler<std::string::const_iterator>> const, phrase_context_type>::type context_type;
+    typedef x3::context<error_handler_tag, std::reference_wrapper<error_handler<std::string::const_iterator>> const, phrase_context_type> context_type;
 
     BOOST_SPIRIT_INSTANTIATE(tree_type, std::string::const_iterator, context_type);
 }
