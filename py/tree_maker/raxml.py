@@ -33,6 +33,8 @@ class Raxml (maker_base.MakerBase):
             }
         general_args = ["-s", self.config["source"], "-w", state["raxml"]["output_dir"], "-m", state["raxml"]["model"], "-e", str(self.config["raxml_model_optimization_precision"]),
                             "-N", "1", "-o", state["outgroup"]] + self.default_args   # "-T", "1"
+        if self.config["raxml_D"]
+            general_args.append("-D")
         # if source_tree is not None:
         #     general_args += ["-t", str(source_tree)]
         state["raxml"]["submitted_tasks"] = state["raxml"]["survived_tasks"] = len(state["raxml"]["run_ids"])

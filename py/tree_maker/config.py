@@ -18,6 +18,8 @@ sDefault = {
     "raxml_kill_rate?": ">0, <=1",
     "raxml_kill_rate": 0.5,
     "raxml_bfgs": True,
+    "raxml_D": True,
+    "raxml_D?": "-D ML search convergence criterion. On trees with more than 500 taxa this will yield execution time improvements of approximately 50% while yielding only slightly worse trees.",
     "raxml_model_optimization_precision?": "see RAxML -e switch, higher values allows faster RAxML run but give worse score",
     "raxml_model_optimization_precision": 0.001,
     "raxml_num_runs?": "number of runs of RAxML with different random seeds",
