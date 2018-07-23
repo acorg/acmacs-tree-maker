@@ -26,8 +26,9 @@ def main(args):
         proc = subprocess.Popen([sGarli, str(config.resolve())], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         lines = []
         while True:
-            line = proc.stdout.readline().decode("utf-8")
-            lines.append(line)
+            line = proc.stdout.readline().decode("utf-8").strip()
+            if line:
+                lines.append(line)
             m = sScore.match(line)
             if m:
                 module_logger.info("score: {}".format(m.group(1)))
