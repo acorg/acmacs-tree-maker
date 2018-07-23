@@ -1,0 +1,126 @@
+#! /usr/bin/env python3
+# -*- Python -*-
+
+"""
+Reports garli score for the raxml resulting tree.
+"""
+
+import sys, os, traceback, tempfile, subprocess
+if sys.version_info.major != 3: raise RuntimeError("Run script with python3")
+from pathlib import Path
+import logging; module_logger = logging.getLogger(__name__)
+
+# ----------------------------------------------------------------------
+
+sGarli = "/syn/bin/garli"
+sScore = re.compile(r"\s*Initial\s+ln\s+Likelihood:\s+-([\d\.]+)", re.I)
+sTimeout = 60
+
+def main(args):
+    exit_code = 0
+    with tempfile.TemporaryDirectory() as output_dir:
+        config = Path(output_dir, "config")
+        with config.open("w") as fd:
+            fd.write(sGarliConfig.format(fasta=args.fasta[0], tree=args.tree[0], output_prefix=str(Path(output_dir, "garli-output"))))
+        proc = subprocess.Popen([sGarliConfig, str(config.resolve())], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        lines = []
+        while True:
+            line = proc.stdout.readline().decode("utf-8")
+            lines.append(line)
+            m = self.sScore.match(line)
+            if m:
+                module_logger.info("score: {}".format(m.group(1)))
+                break
+            if (time_m.time() - start) > sTimeout:
+                module_logger.warning("timeout: cannot find score:\n" + "\n".join(lines))
+                exit_code = 1
+                break
+        proc.kill()
+    return exit_code
+
+# ----------------------------------------------------------------------
+
+sGarliConfig = """[general]
+datafname = {fasta}
+streefname = {tree}
+ofprefix = {output_prefix}
+constraintfile = none
+attachmentspertaxon = 1000000
+randseed = 14380110
+availablememory = 5201
+logevery = 1000
+writecheckpoints = 0
+restart = 0
+saveevery = 1000
+refinestart = 1
+outputcurrentbesttopology = 0
+outputeachbettertopology = 0
+enforcetermconditions = 1
+genthreshfortopoterm = 20000
+scorethreshforterm = 0.05
+significanttopochange = 0.01
+outputphyliptree = 1
+outputmostlyuselessfiles = 0
+outgroup = 1
+resampleproportion = 1.0
+inferinternalstateprobs = 0
+outputsitelikelihoods = 0
+optimizeinputonly = 0
+collapsebranches = 1
+searchreps = 1
+bootstrapreps = 0
+datatype=nucleotide
+ratematrix = 6rate
+statefrequencies = estimate
+ratehetmodel = gamma
+numratecats = 4
+invariantsites = estimate
+[master]
+nindivs = 4
+holdover = 1
+selectionintensity = .5
+holdoverpenalty = 0
+stopgen = 1000000
+stoptime = 3600
+startoptprec = 0.5
+minoptprec = 0.01
+numberofprecreductions = 20
+treerejectionthreshold = 50.0
+topoweight = 1.0
+modweight = 0.05
+brlenweight = 0.2
+randnniweight = 0.1
+randsprweight = 0.3
+limsprweight =  0.6
+intervallength = 100
+intervalstostore = 5
+limsprrange = 6
+meanbrlenmuts = 5
+gammashapebrlen = 1000
+gammashapemodel = 1000
+uniqueswapbias = 0.1
+distanceswapbias = 1.0
+"""
+
+# ----------------------------------------------------------------------
+
+with timeit(sys.argv[0]):
+    try:
+        import argparse
+        parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+        parser.add_argument('fasta', nargs=1, help="source fasta file")
+        parser.add_argument('tree', nargs=1, help="tree (output of raxml)")
+
+        parser.add_argument('-d', '--debug', action='store_const', dest='loglevel', const=logging.DEBUG, default=logging.INFO, help='Enable debugging output.')
+        args = parser.parse_args()
+        logging.basicConfig(level=args.loglevel, format="%(levelname)s %(asctime)s: %(message)s")
+        exit_code = main(args)
+    except Exception as err:
+        logging.error('{}\n{}'.format(err, traceback.format_exc()))
+        exit_code = 1
+exit(exit_code)
+
+# ======================================================================
+### Local Variables:
+### eval: (if (fboundp 'eu-rename-buffer) (eu-rename-buffer))
+### End:
