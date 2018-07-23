@@ -39,6 +39,7 @@ all:  $(TARGETS)
 install: $(TARGETS)
 	$(call install_py_lib,$(TREE_NEWICK_TO_JSON_PY_LIB))
 	ln -sf $(abspath bin)/tree-* $(AD_BIN)
+	ln -sf $(abspath bin)/garli-score-* $(AD_BIN)
 	ln -sf $(abspath py)/* $(AD_PY)
 	ln -sf $(DIST)/tree-* $(AD_BIN)
 
