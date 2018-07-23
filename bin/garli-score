@@ -5,7 +5,7 @@
 Reports garli score for the raxml resulting tree.
 """
 
-import sys, os, traceback, tempfile, subprocess
+import sys, os, re, traceback, tempfile, subprocess, time as time_m
 if sys.version_info.major != 3: raise RuntimeError("Run script with python3")
 from pathlib import Path
 import logging; module_logger = logging.getLogger(__name__)
@@ -22,12 +22,13 @@ def main(args):
         config = Path(output_dir, "config")
         with config.open("w") as fd:
             fd.write(sGarliConfig.format(fasta=args.fasta[0], tree=args.tree[0], output_prefix=str(Path(output_dir, "garli-output"))))
-        proc = subprocess.Popen([sGarliConfig, str(config.resolve())], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        start = time_m.time()
+        proc = subprocess.Popen([sGarli, str(config.resolve())], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         lines = []
         while True:
             line = proc.stdout.readline().decode("utf-8")
             lines.append(line)
-            m = self.sScore.match(line)
+            m = sScore.match(line)
             if m:
                 module_logger.info("score: {}".format(m.group(1)))
                 break
@@ -104,20 +105,19 @@ distanceswapbias = 1.0
 
 # ----------------------------------------------------------------------
 
-with timeit(sys.argv[0]):
-    try:
-        import argparse
-        parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-        parser.add_argument('fasta', nargs=1, help="source fasta file")
-        parser.add_argument('tree', nargs=1, help="tree (output of raxml)")
+try:
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('fasta', nargs=1, help="source fasta file")
+    parser.add_argument('tree', nargs=1, help="tree (output of raxml)")
 
-        parser.add_argument('-d', '--debug', action='store_const', dest='loglevel', const=logging.DEBUG, default=logging.INFO, help='Enable debugging output.')
-        args = parser.parse_args()
-        logging.basicConfig(level=args.loglevel, format="%(levelname)s %(asctime)s: %(message)s")
-        exit_code = main(args)
-    except Exception as err:
-        logging.error('{}\n{}'.format(err, traceback.format_exc()))
-        exit_code = 1
+    parser.add_argument('-d', '--debug', action='store_const', dest='loglevel', const=logging.DEBUG, default=logging.INFO, help='Enable debugging output.')
+    args = parser.parse_args()
+    logging.basicConfig(level=args.loglevel, format="%(levelname)s %(asctime)s: %(message)s")
+    exit_code = main(args)
+except Exception as err:
+    logging.error('{}\n{}'.format(err, traceback.format_exc()))
+    exit_code = 1
 exit(exit_code)
 
 # ======================================================================
