@@ -137,7 +137,7 @@ class GarliResult (maker_base.Result):
     def read(self, best_tree):
         self.tree = str(best_tree)
         self.run_id = Path(best_tree.stem).stem
-        self.score, self.time, self.start_score = None, None, None
+        self.score, self.time, self.start_score, last_score, last_time = None, None, None, None, None
         logfile = best_tree.parent.joinpath(self.run_id + ".log00.log")
         for log_line in logfile.open():
             fields = log_line.split("\t")
@@ -146,9 +146,20 @@ class GarliResult (maker_base.Result):
                     self.score = - float(fields[1])
                     self.time = int(fields[2])
                 elif fields[0] == "0":
-                    self.start_score = - float(fields[1])
+                    self.start_score = last_score = - float(fields[1])
+                    last_time = int(fields[2])
+                elif re.match(r"^\d+$", fields[0]):
+                    last_score = - float(fields[1])
+                    last_time = int(fields[2])
         if self.score is None or self.time is None or self.start_score is None:
-            raise GarliNoResult("Unable to parse " + str(logfile))   # perhaps this condor task was killed
+            module_logger.error(f"Unable to parse {logfile} (perhaps this condor task was killed)\n  score:{self.score!r} last_score:{last_score!r} start_score:{self.start_score!r} time:{self.time!r}")
+            if self.score is None:
+                self.score = last_score
+            if self.time is None:
+                self.time = last_time
+            if self.score is None or self.time is None or self.start_score is None:
+                module_logger.error(f"score:{self.score!r} last_score:{last_score!r} start_score:{self.start_score!r} time:{self.time!r} log:{logfile}")
+                raise GarliNoResult("Unable to parse " + str(logfile))   # perhaps this condor task was killed
 
     def tabbed_report(self):
         return "{:10.4f} {:>8s} {:10.4f} {}".format(self.score, self.time_str(self.time), self.start_score, str(self.tree))
