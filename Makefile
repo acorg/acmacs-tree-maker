@@ -43,7 +43,7 @@ $(DIST)/%: $(BUILD)/%.o
 
 $(TREE_NEWICK_TO_JSON_PY_LIB): $(patsubst %.cc,$(BUILD)/%.o,$(TREE_NEWICK_TO_JSON_PY_SOURCES)) | $(DIST)
 	$(call echo_shared_lib,$@)
-	$(call make_shared_lib,$(TREE_NEWICK_TO_JSON_PY_LIB_NAME),$(TREE_NEWICK_TO_JSON_PY_LIB_MAJOR),$(TREE_NEWICK_TO_JSON_PY_LIB_MINOR)) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(PYTHON_LDLIBS)
+	$(call make_shared_lib,$(TREE_NEWICK_TO_JSON_PY_LIB_NAME),$(TREE_NEWICK_TO_JSON_PY_LIB_MAJOR),$(TREE_NEWICK_TO_JSON_PY_LIB_MINOR)) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(PYTHON_LIBS)
 
 # ======================================================================
 ### Local Variables:
