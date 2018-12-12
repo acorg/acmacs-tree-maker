@@ -34,6 +34,7 @@ install: $(TARGETS)
 
 test: install
 	if [ "$$(uname)" == "Darwin" ]; then $(DIST)/tree-newick-to-json <test/newick.phy | diff test/newick.json -; else echo WARNING: no tree-maker test run on $$(uname); fi
+.PHONY: test
 
 # ----------------------------------------------------------------------
 
