@@ -1,6 +1,4 @@
 # -*- Python -*-
-# license
-# license.
 # ======================================================================
 
 import logging; module_logger = logging.getLogger(__name__)
@@ -38,6 +36,12 @@ sDefault = {
     }
 
 # ----------------------------------------------------------------------
+
+def get_default_config():
+    return sDefault
+
+# ----------------------------------------------------------------------
+
 
 def init(args):
     working_dir = Path(args.working_dir)
