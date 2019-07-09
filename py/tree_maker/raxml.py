@@ -32,7 +32,7 @@ class Raxml (maker_base.MakerBase):
             "run_ids": ["{}.{:04d}".format(run_id, run_no) for run_no in range(num_runs)],
             }
         general_args = ["-s", self.config["source"], "-w", state["raxml"]["output_dir"], "-m", state["raxml"]["model"], "-e", str(self.config["raxml_model_optimization_precision"]),
-                            "-N", "1", "-o", state["outgroup"]] + self.default_args   # "-T", "1"
+                            "-N", "1", "--stop-after-seconds", self.config["raxml_stop_after_seconds"], "-o", state["outgroup"]] + self.default_args   # "-T", "1"
         if self.config["raxml_D"]:
             general_args.append("-D")
         # if source_tree is not None:
