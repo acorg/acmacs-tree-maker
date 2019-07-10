@@ -6,6 +6,7 @@
 import logging; module_logger = logging.getLogger(__name__)
 from pathlib import Path
 import sys, re, time as time_m, operator, subprocess
+from acmacs_base import email
 from . import htcondor, maker_base
 
 # ----------------------------------------------------------------------
@@ -73,7 +74,6 @@ class Garli (maker_base.MakerBase):
                 availablememory = m.group(1)
                 break
             if (time_m.time() - start) > timeout:
-                from . import email
                 import socket
                 hostname = socket.getfqdn().split(".")[0]
                 email.send(to=self.config["email"], subject="{} {} warning".format(hostname, sys.argv[0]),
