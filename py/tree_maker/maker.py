@@ -30,12 +30,14 @@ def step(args):
 def wait(args):
     config = config_m.load(Path(args.working_dir, args.config_file_name))
     state_filename = Path(args.working_dir, "state.json")
+    working_dir = Path(args.working_dir).resolve()
+    working_dir_short = working_dir.replace("/syn/eu/ac/results", "")
     if state_filename.exists():
         state = json_m.read_json(state_filename)
     else:
         state = {
             "state": "init",
-            "working_dir": str(Path(args.working_dir).resolve())
+            "working_dir": str(working_dir)
             }
         json_m.write_json(path=state_filename, data=state, indent=2, compact=True)
     runner = create_runner(config=config, state=state)
@@ -44,10 +46,10 @@ def wait(args):
             runner.step()
             json_m.write_json(path=state_filename, data=state, indent=2, compact=True)
         if args.email and config.get("email"):
-            email.send(to=config["email"], subject="{} completed in {}".format(sys.argv[0], Path(args.working_dir).resolve()), body="{} completed in\n{}".format(sys.argv[0], Path(args.working_dir).resolve()))
+            email.send(to=config["email"], subject="{} completed in {}".format(sys.argv[0], working_dir_short), body="{} completed in\n{}\n\n{}\n".format(sys.argv[0], working_dir, working_dir.joinpath("result.all.txt").open().read()))
     except Exception as err:
         if args.email and config.get("email"):
-            email.send(to=config["email"], subject="{} FAILED in {}".format(sys.argv[0], Path(args.working_dir).resolve()), body="{} FAILED in\n{}\n\n{}\n\n{}".format(sys.argv[0], Path(args.working_dir).resolve(), err, traceback.format_exc()))
+            email.send(to=config["email"], subject="{} FAILED in {}".format(sys.argv[0], working_dir_short), body="{} FAILED in\n{}\n\n{}\n\n{}".format(sys.argv[0], working_dir, err, traceback.format_exc()))
         raise
 
 # ----------------------------------------------------------------------
