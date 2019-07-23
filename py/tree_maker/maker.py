@@ -31,7 +31,7 @@ def wait(args):
     config = config_m.load(Path(args.working_dir, args.config_file_name))
     state_filename = Path(args.working_dir, "state.json")
     working_dir = Path(args.working_dir).resolve()
-    working_dir_short = working_dir.replace("/syn/eu/ac/results", "")
+    working_dir_short = str(working_dir).replace("/syn/eu/ac/results", "")
     if state_filename.exists():
         state = json_m.read_json(state_filename)
     else:
