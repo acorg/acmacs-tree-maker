@@ -6,28 +6,19 @@
 
 Makes phylogenetic tree on the AC cluster.
 
-1. Create a directory on albertine, e.g.
-   /syn/eu/ac/results/whocc-tree/<bvic byam h1 h3>/$(date "+%Y-%m%d-%H%M")
-   cd to that directory.
+See acmacs-whocc/doc/make-trees.org for instruction on making trees
 
-2. Export sequences into fasta file, e.g.
-   ~/AD/bin/seqdb-export --tree-maker --db ~/AD/data/seqdb.json.xz source.fasta --flu h1 --start-date 20160401 --base-seq 'HAWAII/22/2012 MDCK1'
-
-3. Initilialize tree maker
+Initilialize tree maker
    ~/AD/bin/tree-maker init
 
-4. Edit tree-maker.config
-
-5. Perform next iteration
+Perform next iteration
    ~/AD/bin/tree-maker step
+
 Or automatically perform all iterations
    ~/AD/bin/tree-maker wait
 
-6. Check progress
+Check progress
    ~/AD/bin/tree-maker state
-
-7. Use tree drawing program to generate pdf with the resulting tree or
-   signature page.
 
 ======================================================================
 """
