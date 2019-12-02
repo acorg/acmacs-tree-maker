@@ -5,24 +5,29 @@
 
 declare -A BASE_SEQS
 declare -A SEQDB3_ARGS
+declare -A TITLE
 
 # ---------- H1 ----------
 BASE_SEQS[h1]="MICHIGAN/45/2015 QMC2MDCK3"
 SEQDB3_ARGS[h1]="--flu h1 --recent-matched 3000,4000 --nuc-hamming-distance-threshold 160"
+TITLE[h1]="tree H1"
 
 # ---------- H3 ----------
 BASE_SEQS[h3]="SWITZERLAND/8060/2017 SIAT2"
 SEQDB3_ARGS[h3]="--flu h3 --recent-matched 3000,4000 --nuc-hamming-distance-threshold 160"
+TITLE[h3]="tree H3"
 
 # ---------- BVic ----------
 BASE_SEQS[bv]="VICTORIA/830/2013"
 SEQDB3_ARGS[bv]="--whocc-lab --flu b --lineage vic --recent 7000 --nuc-hamming-distance-threshold 160"
+TITLE[bv]="tree B/Vic"
 
 # ---------- BYam ----------
 BASE_SEQS[by]="B/NEW HAMPSHIRE/1/2016 E5"
 SEQDB3_ARGS[by]="--flu b --lineage yam --recent-matched 4000,3000 --nuc-hamming-distance-threshold 160"
+TITLE[by]="tree B/Yam"
 
-SEQDB3_COMMON_ARGS="--db seqdb.json.xz --nucs --wrap --most-common-length --name-format '{seq_id}'"
+SEQDB3_COMMON_ARGS="--db ../seqdb.json.xz --nucs --wrap --most-common-length --name-format '{seq_id}'"
 
 # ======================================================================
 
@@ -33,3 +38,10 @@ echo ${ROOT_DIR}
 mkdir -p ${ROOT_DIR}
 cd ${ROOT_DIR}
 cp "${ACMACSD_ROOT}/data/seqdb.json.xz" .
+
+for vir in h1; do # h3 bv by; do
+    cmd="mkdir ${vir} && seqdb3 ${SEQDB3_COMMON_ARGS} ${SEQDB3_ARGS[${vir}]} --base-seq '${BASE_SEQS[${vir}]}' --fasta ${vir}/source.fas && cd ${vir} && tree-maker init; mg tree-maker.config; tree-maker state"
+    # echo $cmd
+    pane=$(tmux new-window -c "${ROOT_DIR}" -n "${TITLE[${vir}]}" -P)
+    tmux send-keys -t "${pane}" "mkdir -p ${vir} && cd ${vir} && seqdb3 ${SEQDB3_COMMON_ARGS} ${SEQDB3_ARGS[${vir}]} --base-seq '${BASE_SEQS[${vir}]}' --fasta source.fas && tree-maker init && mg tree-maker.config && echo tree-maker wait" Enter
+done
