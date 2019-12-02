@@ -10,9 +10,12 @@ from acmacs_base import json
 
 sDefault = {
     "source": "",
-    "mode?": ["raxml_survived_best_garli", "raxml_best_garli", "raxml_all_garli"],
-    "mode": "raxml_survived_best_garli",
+    "mode?": ["raxmlng_garli", "raxml_survived_best_garli", "raxml_best_garli", "raxml_all_garli"],
+    "mode": "raxmlng_garli", # "raxml_survived_best_garli",
     "wait_timout": 60,
+
+    "raxmlng_num_runs": 30,
+
     "raxml_stop_after_seconds": 1,
     "raxml_kill_rate?": ">=0, <=1",
     "raxml_kill_rate": 0,
@@ -23,6 +26,7 @@ sDefault = {
     "raxml_model_optimization_precision": 0.001,
     "raxml_num_runs?": "number of runs of RAxML with different random seeds",
     "raxml_num_runs": 30,
+
     "garli_num_runs?": "number of runs of GARLI with different random seeds",
     "garli_num_runs": 16,
     "garli_attachmentspertaxon?": "GARLI: the number of attachment branches evaluated for each taxon to be added to the tree during the creation of an ML stepwise-addition starting tree (when garli is run without raxml step)",

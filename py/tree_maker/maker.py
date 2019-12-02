@@ -62,6 +62,8 @@ def create_runner(config, state):
         runner = RaxmlBestGarli(config=config, state=state)
     elif config["mode"] == "raxml_all_garli":
         runner = RaxmlAllGarli(config=config, state=state)
+    elif config["mode"] == "raxmlng_garli":
+        runner = RaxmlNGGarli(config=config, state=state)
     else:
         raise ValueError("Unsupported mode: " + repr(config["mode"]))
     return runner
@@ -97,6 +99,10 @@ class RunnerBase:
         from .raxml import Raxml
         return Raxml(config=self.config)
 
+    def get_raxmlng(self):
+        from .raxml_ng import RaxmlNG
+        return RaxmlNG(config=self.config)
+
     def get_garli(self):
         from .garli import Garli
         return Garli(config=self.config)
@@ -106,6 +112,12 @@ class RunnerBase:
         raxml.prepare(state=self.state)
         if submit:
             raxml.submit(state=self.state)
+
+    def raxmlng_submit(self, submit=True):
+        raxmlng = self.get_raxmlng()
+        raxmlng.prepare(state=self.state)
+        if submit:
+            raxmlng.submit(state=self.state)
 
     def garli_submit(self, submit=True):
         garli = self.get_garli()
@@ -198,6 +210,61 @@ class RaxmlBestGarli (RaxmlGarli):
 
 class RaxmlAllGarli (RaxmlGarli):
     ""
+
+# ----------------------------------------------------------------------
+
+class RaxmlNGGarli (RunnerBase):
+
+    def on_state_init(self):
+        super().on_state_init()
+        return self.raxmlng_submit()
+
+    def on_state_raxml_done(self, **kwargs):
+        self.garli_submit()
+
+    def on_state_garli_done(self, **kwargs):
+        self.make_results()
+        self.state["state"] = "completed"
+
+    def make_results(self):
+        from .maker_base import Result
+        overall_time = self.state["raxmlng"]["overall_time"] + self.state["garli"]["overall_time"]
+        overall_time_s = Result.time_str(overall_time)
+        module_logger.info('Overall time: ' + overall_time_s)
+        from .garli import GarliResults
+        garli_results = GarliResults.from_json(config=self.config, state=self.state, filepath=Path(self.state["working_dir"], "result.garli.json"))
+        r_best = vars(garli_results.results[0])
+        r_best["overall_time"] = overall_time
+        r_best["overall_time_s"] = overall_time_s
+        json_m.write_json(Path(self.state["working_dir"], "result.best.json"), r_best, indent=2, compact=False)
+
+        with Path(self.state["working_dir"], "result.all.txt").open("w") as f:
+            f.write("Overall time: " + overall_time_s + "\n")
+            f.write("GARLI score : " + str(r_best["score"]) + "\n")
+            f.write("Tree        : " + str(r_best["tree"]) + "\n")
+
+        # from .raxmlng import RaxmlResults
+        # raxmlng_results = RaxmlResults.from_json(config=self.config, state=self.state, filepath=Path(self.state["working_dir"], "result.raxml.json"))
+        # results = {
+        #     " total": {
+        #         "longest_time": longest_time,
+        #         "longest_time_s": longest_time_s,
+        #         "overall_time": overall_time,
+        #         "overall_time_s": overall_time_s,
+        #         "tree": str(garli_results.results[0].tree),
+        #         "garli_score": garli_results.results[0].score,
+        #         },
+        #     "garli": [vars(r) for r in garli_results.results],
+        #     "raxmlng": [r if isinstance(r, dict) else vars(r) for r in raxmlng_results.results],
+        #     }
+        # json_m.write_json(Path(self.state["working_dir"], "result.all.json"), results, indent=2, compact=True)
+
+        # convert best tree from newick to json
+        import tree_newick_to_json
+        tree = tree_newick_to_json.Tree()
+        tree_newick_to_json.import_newick(open(r_best["tree"]).read(), tree)
+        j = tree_newick_to_json.json(tree)
+        files.write_binary(Path(self.state["working_dir"], "tree.json.xz"), j)
 
 # ======================================================================
 ### Local Variables:
