@@ -39,9 +39,7 @@ mkdir -p ${ROOT_DIR}
 cd ${ROOT_DIR}
 cp "${ACMACSD_ROOT}/data/seqdb.json.xz" .
 
-for vir in h1; do # h3 bv by; do
-    cmd="mkdir ${vir} && seqdb3 ${SEQDB3_COMMON_ARGS} ${SEQDB3_ARGS[${vir}]} --base-seq '${BASE_SEQS[${vir}]}' --fasta ${vir}/source.fas && cd ${vir} && tree-maker init; mg tree-maker.config; tree-maker state"
-    # echo $cmd
+for vir in h1 h3 bv by; do
     pane=$(tmux new-window -c "${ROOT_DIR}" -n "${TITLE[${vir}]}" -P)
     tmux send-keys -t "${pane}" "mkdir -p ${vir} && cd ${vir} && seqdb3 ${SEQDB3_COMMON_ARGS} ${SEQDB3_ARGS[${vir}]} --base-seq '${BASE_SEQS[${vir}]}' --fasta source.fas && tree-maker init && mg tree-maker.config && echo tree-maker wait" Enter
 done
