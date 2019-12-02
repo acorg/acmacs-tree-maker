@@ -1,0 +1,13 @@
+#! /bin/bash
+# 2019-12-02
+
+declare -A BASE_SEQS=( [h1]="MICHIGAN/45/2015 QMC2MDCK3" [h3]="SWITZERLAND/8060/2017 SIAT2" [bv]="VICTORIA/830/2013" [by]="B/NEW HAMPSHIRE/1/2016 E5" )
+declare -A RECENT=( [h1]="--recent-matched 3000,4000" [h3]="--recent-matched 3000,4000" [bv]="--recent 7000" [by]="--recent-matched 4000,3000" )
+
+set -x
+DATE=$(date +%Y-%m%d)
+ROOT_DIR=/syn/eu/ac/results/signature-pages/${DATE}
+echo ${ROOT_DIR}
+mkdir -p ${ROOT_DIR}
+cd ${ROOT_DIR}
+cp "${ACMACSD_ROOT}/data/seqdb.json.xz" .
