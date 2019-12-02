@@ -219,6 +219,14 @@ class RaxmlNGGarli (RunnerBase):
         super().on_state_init()
         return self.raxmlng_submit()
 
+    def on_state_raxml_submitted(self, **kwargs):
+        raxml = self.get_raxmlng()
+        if not self.state["raxmlng"].get("overall_time"):
+            raxml.wait(state=self.state)
+        if self.state["raxmlng"].get("overall_time"):
+            raxml.make_results(state=self.state)
+            self.state["state"] = "raxml_done"
+
     def on_state_raxml_done(self, **kwargs):
         self.garli_submit()
 
@@ -243,8 +251,8 @@ class RaxmlNGGarli (RunnerBase):
             f.write("GARLI score : " + str(r_best["score"]) + "\n")
             f.write("Tree        : " + str(r_best["tree"]) + "\n")
 
-        # from .raxmlng import RaxmlResults
-        # raxmlng_results = RaxmlResults.from_json(config=self.config, state=self.state, filepath=Path(self.state["working_dir"], "result.raxml.json"))
+        # from .raxmlng import RaxmlNGResults
+        # raxmlng_results = RaxmlNGResults.from_json(config=self.config, state=self.state, filepath=Path(self.state["working_dir"], "result.raxml.json"))
         # results = {
         #     " total": {
         #         "longest_time": longest_time,
