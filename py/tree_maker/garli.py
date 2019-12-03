@@ -39,6 +39,7 @@ class Garli (maker_base.MakerBase):
             program=state["garli"]["program"],
             program_args=[[c] for c in conf_files],
             priority=-10,
+            request_cpus=2,     # avoid using hyperthreading
             description="Garli {run_id} {num_runs}".format(run_id=run_id, num_runs=num_runs,),
             request_memory=state["garli"]["availablememory"],
             current_dir=output_dir,
