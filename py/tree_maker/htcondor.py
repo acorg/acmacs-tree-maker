@@ -157,7 +157,7 @@ def submit(desc_filename):
 
 # ----------------------------------------------------------------------
 
-sMachineName = {"albertine": "i19", "odette": "odette.antigenic-cartography.org", "i18": "odette.antigenic-cartography.org"}
+sMachineName = {"albertine": "i19", "odette": "i18", "i18": "i18"}
 def fix_machine_name(machine):
     return sMachineName.get(machine, machine)
 

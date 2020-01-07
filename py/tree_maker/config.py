@@ -36,7 +36,7 @@ sDefault = {
     "garli_genthreshfortopoterm?": "GARLI termination condition: when no new significantly better scoring topology has been encountered in greater than this number of generations, garli stops",
     "garli_genthreshfortopoterm": 20000,
     "email": getpass.getuser(),
-    "machines?": ["odette", "i19", "i20", "i21", "i22", "o16", "o17"],
+    "machines?": ["i18", "i19", "i20", "i21", "i22", "o16", "o17"],
     "machines": ["i22"],
     }
 
