@@ -1,5 +1,10 @@
 #! /bin/bash
-# 2019-12-02
+# 2020-01-17
+
+SUBTYPES="h1 h3 bv by"
+if [[ $# -eq 1 ]]; then
+    SUBTYPES="$1"
+fi
 
 # ======================================================================
 
@@ -13,7 +18,13 @@ SEQDB3_ARGS[h1]="--flu h1 --recent-matched 3000,4000 --nuc-hamming-distance-thre
 TITLE[h1]="tree H1"
 
 # ---------- H3 ----------
-BASE_SEQS[h3]="SWITZERLAND/8060/2017 SIAT2"
+# BASE_SEQS[h3]="SWITZERLAND/8060/2017 SIAT2"
+
+# [2020-01-17] trying 3C.3A base seq from the end of 2017
+# seqdb3 --flu h3 --whocc-lab --clade 3C.3A --start-date 2017-10-01 --end-date 2018 -p
+# A\\(H3N2\\)/ is necessary to avoid selecting AH3N2/ARKANSAS/14/2017_OR
+BASE_SEQS[h3]="A\\(H3N2\\)/KANSAS/14/2017 OR"
+
 SEQDB3_ARGS[h3]="--flu h3 --recent-matched 3000,4000 --nuc-hamming-distance-threshold 160"
 TITLE[h3]="tree H3"
 
@@ -39,7 +50,7 @@ mkdir -p ${ROOT_DIR}
 cd ${ROOT_DIR}
 cp "${ACMACSD_ROOT}/data/seqdb.json.xz" .
 
-for vir in h1 h3 bv by; do
+for vir in ${SUBTYPES}; do
     pane=$(tmux new-window -c "${ROOT_DIR}" -n "${TITLE[${vir}]}" -P)
     tmux send-keys -t "${pane}" "mkdir -p ${vir} && cd ${vir} && seqdb3 ${SEQDB3_COMMON_ARGS} ${SEQDB3_ARGS[${vir}]} --base-seq '${BASE_SEQS[${vir}]}' --fasta source.fas && tree-maker init && mg tree-maker.config && echo tree-maker wait" Enter
 done
