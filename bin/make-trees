@@ -18,12 +18,18 @@ SEQDB3_ARGS[h1]="--flu h1 --recent-matched 3000,4000 --nuc-hamming-distance-thre
 TITLE[h1]="tree H1"
 
 # ---------- H3 ----------
+# --> 3a clade is in the middle of the tree, surrounded by 2a subclades
 # BASE_SEQS[h3]="SWITZERLAND/8060/2017 SIAT2"
-
+#
 # [2020-01-17] trying 3C.3A base seq from the end of 2017
 # seqdb3 --flu h3 --whocc-lab --clade 3C.3A --start-date 2017-10-01 --end-date 2018 -p
 # A\\(H3N2\\)/ is necessary to avoid selecting AH3N2/ARKANSAS/14/2017_OR
-BASE_SEQS[h3]="A\\(H3N2\\)/KANSAS/14/2017 OR"
+# --> leads to 3a subtree having much shorted edges than 2a subtree
+# BASE_SEQS[h3]="A\\(H3N2\\)/KANSAS/14/2017 OR"
+#
+# [2020-01-24] Derek: the h3 tree should be rooted with an older than 3c.3a and older than 3c.2a strain
+# seqdb3 --flu h3 --start-date 2017 --end-date 2017-02 -p --whocc-lab --with-hi-name | grep -v '3C.[123]'
+BASE_SEQS[h3]="A\\(H3N2\\)/HAWAII/3/2017"
 
 SEQDB3_ARGS[h3]="--flu h3 --recent-matched 3000,4000 --nuc-hamming-distance-threshold 160"
 TITLE[h3]="tree H3"
