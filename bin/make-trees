@@ -14,7 +14,7 @@ declare -A TITLE
 
 # ---------- H1 ----------
 BASE_SEQS[h1]="MICHIGAN/45/2015 QMC2MDCK3"
-SEQDB3_ARGS[h1]="--flu h1 --recent-matched 3000,4000 --nuc-hamming-distance-threshold 160"
+SEQDB3_ARGS[h1]="--flu h1 --recent-matched 3000,4000 --host human --nuc-hamming-distance-threshold 160"
 TITLE[h1]="tree H1"
 
 # ---------- H3 ----------
@@ -31,7 +31,7 @@ TITLE[h1]="tree H1"
 # seqdb3 --flu h3 --start-date 2017 --end-date 2017-02 -p --whocc-lab --with-hi-name | grep -v '3C.[123]'
 BASE_SEQS[h3]="A\\(H3N2\\)/HAWAII/3/2017"
 
-SEQDB3_ARGS[h3]="--flu h3 --recent-matched 3000,4000 --nuc-hamming-distance-threshold 160"
+SEQDB3_ARGS[h3]="--flu h3 --recent-matched 3000,4000 --host human --nuc-hamming-distance-threshold 160"
 TITLE[h3]="tree H3"
 
 # ---------- BVic ----------
