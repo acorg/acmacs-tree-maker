@@ -30,11 +30,12 @@ TITLE[h1]="tree H1"
 # [2020-01-24] Derek: the h3 tree should be rooted with an older than 3c.3a and older than 3c.2a strain
 # seqdb3 --flu h3 --start-date 2017 --end-date 2017-02 -p --whocc-lab --with-hi-name | grep -v '3C.[123]'
 # --> 2a3 clade is above 3a clade and closer to the outgroup
-# BASE_SEQS[h3]="A\\(H3N2\\)/HAWAII/3/2017"
-#
+BASE_SEQS[h3]="A\\(H3N2\\)/HAWAII/3/2017"
+
 # [2020-01-27]
 # seqdb3 --flu h3 --start-date 2016 --end-date 2016-04 -p --whocc-lab --with-hi-name | grep -v '3C.[123]'
-BASE_SEQS[h3]="A\\(H3N2\\)/NEW YORK/60/2016"
+# --> seems to be worse than A/HAWAII/3/2017 case, 2a2 is above 3a
+# BASE_SEQS[h3]="A\\(H3N2\\)/NEW YORK/60/2016"
 
 SEQDB3_ARGS[h3]="--flu h3 --recent-matched 3000,4000 --host human --nuc-hamming-distance-threshold 160"
 TITLE[h3]="tree H3"
