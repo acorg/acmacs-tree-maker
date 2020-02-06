@@ -37,6 +37,37 @@ BASE_SEQS[h3]="A\\(H3N2\\)/HAWAII/3/2017"
 # --> seems to be worse than A/HAWAII/3/2017 case, 2a2 is above 3a
 # BASE_SEQS[h3]="A\\(H3N2\\)/NEW YORK/60/2016"
 
+# [2020-02-06]
+# intermediate strains from nextflu https://nextstrain.org/flu/seasonal/h3n2/ha/2y
+# to keep 3a at the top
+# Stockholm/6/2014 2014-02-06 3c3
+# Switzerland/9715293/2013 2013-12-06 3a
+# Norway/466/2014 2014-02-03 3a
+# South Australia/55/2014 2014-06-29 3a
+# Tasmania/11/2014 2014-03-16 3a
+# Kobe/63/2014 2014-05-21 3a
+# Peru/27/2015 2015-04-13 3a
+# Nevada/22/2016 2016-03-05 3a
+# Idaho/33/2016 2016-06-08 3a
+# Texas/88/2016 2016-02-25 3a
+# Texas/71/2017 2017-03-18 3a
+# Brazil/7331/2018 2018-07-09 3a "AH3N2/BRAZIL/7331/2018_OR"
+#
+# Hong Kong/4801/2014 2014-02-26 2a
+# Hawaii/47/2014 2014-07-18 2a
+#
+# North Carolina/4/2017 2017-01-26 2a2
+#
+# North Carolina/4/2016 2016-01-14 2a1
+# Antananarivo/1067/2016 2016-04-06 2a1
+#
+# Hong Kong/2286/2017 2017-05-23 2a1b 135K
+# Wisconsin/327/2017 2017-09-22  2a1b 135K
+# Abu Dhabi/240/2018 2018-01-01 2a1b 135K
+#
+# Jamaica/1447/2018 2018-02-19 2a1b 131K
+
+
 SEQDB3_ARGS[h3]="--flu h3 --recent-matched 3000,4000 --host human --nuc-hamming-distance-threshold 160"
 TITLE[h3]="tree H3"
 
