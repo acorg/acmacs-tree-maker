@@ -4,8 +4,8 @@ import sys, os, shutil, datetime, subprocess
 from pathlib import Path
 
 SUBTYPES = ["h1", "h3", "bv", "by"]
-if len(sys.argv) == 1:
-    SUBTYPES = [sys.argv[0].lower()]
+if len(sys.argv) == 2:
+    SUBTYPES = [sys.argv[1].lower()]
 
 # ======================================================================
 
@@ -64,11 +64,11 @@ SEQDB3_COMMON_ARGS = ["--db", "../seqdb.json.xz", "--nucs", "--wrap", "--most-co
 
 # ======================================================================
 
-DATE = datetime.date.today.strftime("%Y-%m%d")
+DATE = datetime.date.today().strftime("%Y-%m%d")
 ROOT_DIR = Path("/syn/eu/ac/results/signature-pages", DATE)
 print(ROOT_DIR)
 ROOT_DIR.mkdir(parents=True)
-shutil.copyfile(Path(os.environ["ACMACSD_ROOT"], "data", "seqdb.json.xz"), ROOT_DIR)
+shutil.copyfile(Path(os.environ["ACMACSD_ROOT"], "data", "seqdb.json.xz"), Path(ROOT_DIR, "seqdb.json.xz"))
 
 for subtype in SUBTYPES:
     if DATA[subtype]["prepend"]:
@@ -83,8 +83,8 @@ for subtype in SUBTYPES:
     with script_path.open("w") as script:
         script.write(f"#! /bin/bash\n{command}\n")
     script_path.chmod(0o755)
-    pane = subprocess.check_output(["tmux", "new-window", "-c", str(subtype_dir), "-n", DATA[subtype]["title"], "-P"]).stdout.decode("utf-8")
-    subtype.check_call(["tmux", "send-keys", "-t", pane, "./export.sh && tree-maker init && mg tree-maker.config && echo tree-maker wait", "Enter"])
+    pane = subprocess.check_output(["tmux", "new-window", "-c", str(subtype_dir), "-P"]).decode("utf-8").strip()
+    subprocess.check_call(["tmux", "send-keys", "-t", pane, f"""title '{DATA[subtype]["title"]}' && ./export.sh && tree-maker init && mg tree-maker.config && echo tree-maker wait""", "Enter"])
 
 
 # ======================================================================
