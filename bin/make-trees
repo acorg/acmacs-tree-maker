@@ -41,7 +41,8 @@ DATA = {
             "AH3N2/ABU_DHABI/240/2018_OR",                        # 2018-01-01    2a1b 135K
             "AH3N2/JAMAICA/1447/2018_OR"                          # 2018-02-19    2a1b 131K
         ],
-        "args": ["--flu", "h3", "--recent-matched", "3000,4000", "--host", "human", "--nuc-hamming-distance-threshold", "80"],
+        # before 2020-02-10  "args": ["--flu", "h3", "--recent-matched", "3000,4000", "--host", "human", "--nuc-hamming-distance-threshold", "80"],
+        "args": ["--flu", "h3", "--recent-matched-master", "5000,3000", "--host", "human", "--nuc-hamming-distance-threshold", "80"],
         "title": "tree H3"
         },
 
