@@ -14,7 +14,7 @@ sDefault = {
     "mode": "raxmlng_garli", # "raxml_survived_best_garli",
     "wait_timout": 60,
 
-    "raxmlng_num_runs": 30,
+    "raxmlng_num_runs": 16,
 
     # "raxml_stop_after_seconds": 1,
     # "raxml_kill_rate?": ">=0, <=1",
@@ -49,7 +49,7 @@ def get_default_config():
 
 
 def init(args):
-    working_dir = Path(args.working_dir)
+    working_dir = Path(args.working_dir).resolve()
     if not working_dir.exists():
         raise RuntimeError("Working dir {!r} does not exist".format(working_dir))
     config = sDefault
@@ -59,6 +59,15 @@ def init(args):
     if len(fasta) > 1:
         module_logger.warning('Multiple fasta files found: {}, the first one will be used.'.format(fasta))
     config["source"] = str(Path(fasta[0]).resolve())
+    print("working_dir", working_dir, working_dir.name)
+    if working_dir.name == "h1":
+        config["machines"] = ["i20"]
+    elif working_dir.name == "h3":
+        config["machines"] = ["i22"]
+    elif working_dir.name == "bv":
+        config["machines"] = ["i21"]
+    elif working_dir.name == "by":
+        config["machines"] = ["i18"]
     save(filename=working_dir.joinpath(args.config_file_name), config=config)
 
 # ----------------------------------------------------------------------

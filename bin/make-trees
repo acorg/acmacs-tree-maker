@@ -85,7 +85,7 @@ for subtype in SUBTYPES:
         script.write(f"#! /bin/bash\n{command}\n")
     script_path.chmod(0o755)
     pane = subprocess.check_output(["tmux", "new-window", "-c", str(subtype_dir), "-P"]).decode("utf-8").strip()
-    subprocess.check_call(["tmux", "send-keys", "-t", pane, f"""title '{DATA[subtype]["title"]}' && ./export.sh && tree-maker init && mg tree-maker.config && echo tree-maker wait""", "Enter"])
+    subprocess.check_call(["tmux", "send-keys", "-t", pane, f"""echo "title '{DATA[subtype]["title"]}'" && ./export.sh && tree-maker init && title '{DATA[subtype]["title"]}' && mg tree-maker.config && echo tree-maker wait""", "Enter"])
 
 
 # ======================================================================
