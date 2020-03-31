@@ -36,7 +36,7 @@ namespace ast
 
     struct Node
     {
-        inline Node() : length(-1) {}
+        Node() : length(-1) {}
 
         NodeElement element;
         double length;
