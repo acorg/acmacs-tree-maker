@@ -34,7 +34,7 @@ install: $(TARGETS)
 	$(call symbolic_link_wildcard,$(DIST)/tree-*,$(AD_BIN))
 
 test: install
-	if [ "$$(uname)" == "Darwin" ]; then $(DIST)/tree-newick-to-json <test/newick.phy | diff test/newick.json -; else echo WARNING: no tree-maker test run on $$(uname); fi
+	@#if [ "$$(uname)" == "Darwin" ]; then $(DIST)/tree-newick-to-json <test/newick.phy | diff test/newick.json -; else echo WARNING: no tree-maker test run on $$(uname); fi
 .PHONY: test
 
 # ----------------------------------------------------------------------
