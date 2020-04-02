@@ -1,9 +1,9 @@
 # -*- Makefile -*-
 # ======================================================================
 
-TARGETS = \
-	$(DIST)/tree-newick-to-json \
-	$(TREE_NEWICK_TO_JSON_PY_LIB)
+# TARGETS = \
+# 	$(DIST)/tree-newick-to-json \
+# 	$(TREE_NEWICK_TO_JSON_PY_LIB)
 
 TREE_NEWICK_TO_JSON_PY_SOURCES = tree-newick-to-json-py.cc
 
