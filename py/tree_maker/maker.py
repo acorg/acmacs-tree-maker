@@ -3,7 +3,7 @@
 # license.
 # ======================================================================
 
-import sys, traceback
+import sys, traceback, subprocess
 import logging; module_logger = logging.getLogger(__name__)
 from pathlib import Path
 from . import config as config_m
@@ -251,6 +251,8 @@ class RaxmlNGGarli (RunnerBase):
             f.write("GARLI score : " + str(r_best["score"]) + "\n")
             f.write("Tree        : " + str(r_best["tree"]) + "\n")
 
+        self.convert_tree_to_json(r_best["tree"])
+
         # from .raxmlng import RaxmlNGResults
         # raxmlng_results = RaxmlNGResults.from_json(config=self.config, state=self.state, filepath=Path(self.state["working_dir"], "result.raxml.json"))
         # results = {
@@ -268,11 +270,14 @@ class RaxmlNGGarli (RunnerBase):
         # json_m.write_json(Path(self.state["working_dir"], "result.all.json"), results, indent=2, compact=True)
 
         # convert best tree from newick to json
-        import tree_newick_to_json
-        tree = tree_newick_to_json.Tree()
-        tree_newick_to_json.import_newick(open(r_best["tree"]).read(), tree)
-        j = tree_newick_to_json.json(tree)
-        files.write_binary(Path(self.state["working_dir"], "tree.json.xz"), j)
+        # import tree_newick_to_json
+        # tree = tree_newick_to_json.Tree()
+        # tree_newick_to_json.import_newick(open(r_best["tree"]).read(), tree)
+        # j = tree_newick_to_json.json(tree)
+        # files.write_binary(Path(self.state["working_dir"], "tree.json.xz"), j)
+
+    def convert_tree_to_json(self, treefile):
+        subprocess.check_call(["tal", "-D", "whocc", treefile, "tree.json.xz"])
 
 # ======================================================================
 ### Local Variables:

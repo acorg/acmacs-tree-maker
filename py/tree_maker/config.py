@@ -58,7 +58,7 @@ def init(args):
         raise RuntimeError("No .fasta file found in working dir {!r}".format(working_dir))
     if len(fasta) > 1:
         module_logger.warning('Multiple fasta files found: {}, the first one will be used.'.format(fasta))
-    config["source"] = str(Path(fasta[0]).resolve())
+    config["source"] = fasta[0] # str(Path(fasta[0]).resolve())
     print("working_dir", working_dir, working_dir.name)
     if working_dir.name == "h1":
         config["machines"] = ["i20"]

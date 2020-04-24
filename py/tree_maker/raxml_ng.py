@@ -47,7 +47,7 @@ class RaxmlNG (maker_base.MakerBase):
 
         def make_args(**args):
             return [arg.format(**args) for arg in self.args]
-        args = [make_args(source=self.config["source"], outgroup=state["outgroup"], seed=self.random_seed(), output_dir=state["raxmlng"]["output_dir"], run_id=run_id, threads=1) for run_id in state["raxmlng"]["run_ids"]]
+        args = [make_args(source=str(Path(self.config["source"]).resolve()), outgroup=state["outgroup"], seed=self.random_seed(), output_dir=state["raxmlng"]["output_dir"], run_id=run_id, threads=1) for run_id in state["raxmlng"]["run_ids"]]
 
         state["raxmlng"]["desc"], state["raxmlng"]["condor_log"] = htcondor.prepare_submission(
             program=state["raxmlng"]["program"],
