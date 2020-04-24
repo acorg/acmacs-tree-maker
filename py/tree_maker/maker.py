@@ -46,7 +46,8 @@ def wait(args):
             runner.step()
             json_m.write_json(path=state_filename, data=state, indent=2, compact=True)
         if args.email and config.get("email"):
-            body = "{} completed in\n{}\n\nBest tree: scp i19:{}/tree.json.xz\n{}\n".format(sys.argv[0], working_dir, working_dir, working_dir.joinpath("result.all.txt").open().read())
+            body = "{} completed in\n{}\n\nBest tree: scp i19:{}/tree.json.xz\nhttps://notebooks.antigenic-cartography.org/eu/results{}/tree.pdf\n\n{}\n".format(
+                sys.argv[0], working_dir, working_dir, working_dir_short, working_dir.joinpath("result.all.txt").open().read())
             email.send(to=config["email"], subject="{} completed in {}".format(sys.argv[0], working_dir_short), body=body)
     except Exception as err:
         if args.email and config.get("email"):
@@ -278,6 +279,7 @@ class RaxmlNGGarli (RunnerBase):
 
     def convert_tree_to_json(self, treefile):
         subprocess.check_call(["tal", "-D", "whocc", treefile, "tree.json.xz"])
+        subprocess.check_call(["tal", "tree.json.xz", "tree.pdf"])
 
 # ======================================================================
 ### Local Variables:
