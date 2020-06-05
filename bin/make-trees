@@ -13,7 +13,7 @@ DATA = {
     "h1": {
         "base": "AH1N1/MICHIGAN/45/2015_QMC2MDCK3",
         "prepend": [],
-        "args": ["--flu", "h1", "--recent-matched", "3000,4000", "--host", "human", "--nuc-hamming-distance-threshold", "80"],
+        "args": ["--flu", "h1", "--recent-matched", "5000,3000", "--remove-nuc-duplicates", "--host", "human", "--nuc-hamming-distance-threshold", "80"],
         "title": "tree H1"
         },
 
@@ -42,21 +42,21 @@ DATA = {
             "AH3N2/JAMAICA/1447/2018_OR"                          # 2018-02-19    2a1b 131K
         ],
         # before 2020-02-10  "args": ["--flu", "h3", "--recent-matched", "3000,4000", "--host", "human", "--nuc-hamming-distance-threshold", "80"],
-        "args": ["--flu", "h3", "--recent-matched-master", "5000,3000", "--host", "human", "--nuc-hamming-distance-threshold", "80"],
+        "args": ["--flu", "h3", "--recent-matched", "5000,3000", "--remove-nuc-duplicates", "--host", "human", "--nuc-hamming-distance-threshold", "80"],
         "title": "tree H3"
         },
 
     "bv": {
         "base": "B/VICTORIA/830/2013_MDCK2",
         "prepend": [],
-        "args": ["--whocc-lab", "--flu", "b", "--lineage", "vic", "--recent", "7000", "--nuc-hamming-distance-threshold", "80"],
+        "args": ["--flu", "b", "--lineage", "vic", "--recent", "8000", "--remove-nuc-duplicates", "--nuc-hamming-distance-threshold", "80"],
         "title": "tree B/Vic"
         },
 
     "by": {
         "base": "B/NEW_HAMPSHIRE/1/2016_E5",
         "prepend": [],
-        "args": ["--flu", "b", "--lineage", "yam", "--recent-matched", "4000,3000", "--nuc-hamming-distance-threshold", "80"],
+        "args": ["--flu", "b", "--lineage", "yam", "--recent", "8000", "--remove-nuc-duplicates", "--nuc-hamming-distance-threshold", "80"],
         "title": "tree B/Yam"
         },
     }
