@@ -31,6 +31,7 @@ DATA = {
             "AH3N2/TEXAS/88/2016_OR",                             # 2016-02-25    3a
             "AH3N2/TEXAS/71/2017_OR",                             # 2017-03-18    3a
             "AH3N2/BRAZIL/7331/2018_OR",                          # 2018-07-09    3a
+            "AH3N2/KANSAS/14/2017_OR_h",                          # 2017-12-14    3a, to have serum circles in the sig page
             "AH3N2/HONG_KONG/4801/2014_MDCK4/SIAT4",              # 2014-02-26    2a
             "AH3N2/HAWAII/47/2014_SIAT3",                         # 2014-07-18    2a
             "AH3N2/NORTH_CAROLINA/4/2017_OR",                     # 2017-01-26    2a2
