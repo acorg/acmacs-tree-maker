@@ -11,7 +11,7 @@ if len(sys.argv) == 2:
 
 DATA = {
     "h1": {
-        "base": "AH1N1/CALIFORNIA/7/2009_MDCK2_hF31344B2",        # 2009-04-09
+        "base": "AH1N1/SOUTH_AUSTRALIA/30/2013_MDCK1_h67695CD8",  # 2009-04-09
         "prepend": [
             "AH1N1/MICHIGAN/45/2015_QMC2MDCK3",                   # 2015-09-07
         ],
