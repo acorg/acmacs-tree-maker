@@ -15,7 +15,7 @@ DATA = {
         "prepend": [
             "AH1N1/MICHIGAN/45/2015_QMC2MDCK3",                   # 2015-09-07
         ],
-        "args": ["--flu", "h1", "--recent-matched", "5000,3000", "--remove-nuc-duplicates", "--host", "human", "--nuc-hamming-distance-threshold", "80"],
+        "args": ["--flu", "h1", "--recent-matched", "5000,3000", "--remove-nuc-duplicates", "--host", "human", "--nuc-hamming-distance-threshold", "80", "--most-common-length"],
         "title": "tree H1"
         },
 
@@ -49,26 +49,26 @@ DATA = {
             "AH3N2/JAMAICA/1447/2018_OR"                          # 2018-02-19    2a1b 131K
         ],
         # before 2020-02-10  "args": ["--flu", "h3", "--recent-matched", "3000,4000", "--host", "human", "--nuc-hamming-distance-threshold", "80"],
-        "args": ["--flu", "h3", "--recent-matched", "5000,3000", "--remove-nuc-duplicates", "--host", "human", "--nuc-hamming-distance-threshold", "80"],
+        "args": ["--flu", "h3", "--recent-matched", "5000,3000", "--remove-nuc-duplicates", "--host", "human", "--nuc-hamming-distance-threshold", "80", "--length", "1650", "--minimum-nuc-length", "1650"],
         "title": "tree H3"
         },
 
     "bv": {
         "base": "B/VICTORIA/830/2013_MDCK2",
         "prepend": [],
-        "args": ["--flu", "b", "--lineage", "vic", "--recent", "8000", "--remove-nuc-duplicates", "--nuc-hamming-distance-threshold", "80"],
+        "args": ["--flu", "b", "--lineage", "vic", "--recent", "8000", "--remove-nuc-duplicates", "--nuc-hamming-distance-threshold", "80", "--most-common-length"],
         "title": "tree B/Vic"
         },
 
     "by": {
         "base": "B/NEW_HAMPSHIRE/1/2016_E5",
         "prepend": [],
-        "args": ["--flu", "b", "--lineage", "yam", "--recent", "8000", "--remove-nuc-duplicates", "--nuc-hamming-distance-threshold", "80"],
+        "args": ["--flu", "b", "--lineage", "yam", "--recent", "8000", "--remove-nuc-duplicates", "--nuc-hamming-distance-threshold", "80", "--most-common-length"],
         "title": "tree B/Yam"
         },
     }
 
-SEQDB3_COMMON_ARGS = ["--db", "../seqdb.json.xz", "--nucs", "--wrap", "--most-common-length", "--name-format", "{seq_id}"]
+SEQDB3_COMMON_ARGS = ["--db", "../seqdb.json.xz", "--name-format", "{seq_id}", "--nucs", "--wrap", "--remove-with-front-back-deletions"]
 
 # ======================================================================
 
