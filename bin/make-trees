@@ -18,8 +18,12 @@ DATA = {
         },
 
     "h3": {
-        "base": "AH3N2/STOCKHOLM/6/2014_OR", # 3c3
-        "prepend": [ # [2020-02-07] intermediate strains from nextflu https://nextstrain.org/flu/seasonal/h3n2/ha/2y to keep 3a at the top
+        "base": "AH3N2/VICTORIA/361/2011_MDCK1_hC1FB49BE",        # 2011-10-24    3C.3
+        "prepend": [
+            # [2020-08-17] Derek thinks that the root (A/STOCKHOLM/6/2014) is not old enough
+            "AH3N2/TEXAS/50/2012_MK1/MDCK1_h6BD4A807",            # 2012-04-15    3C.3
+            "AH3N2/STOCKHOLM/6/2014_OR",                          # 2014-02-06    3a
+            # [2020-02-07] intermediate strains from nextflu https://nextstrain.org/flu/seasonal/h3n2/ha/2y to keep 3a at the top
             "AH3N2/SWITZERLAND/9715293/2013_SIAT1/SIAT2/SIAT1",   # 2013-12-06    3a
             "AH3N2/NORWAY/466/2014_SIAT1SIAT1/SIAT1",             # 2014-02-03    3a
             "AH3N2/SOUTH_AUSTRALIA/55/2014_MDCK1/",               # 2014-06-29    3a
