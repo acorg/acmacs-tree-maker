@@ -63,7 +63,7 @@ DATA = {
     "bv": {
         "base": "B/VICTORIA/830/2013_MDCK2",
         "prepend": [],
-        "args": ["--flu", "b", "--lineage", "vic", "--recent", "8000", "--remove-nuc-duplicates", "--nuc-hamming-distance-threshold", "80", "--most-common-length"],
+        "args": ["--flu", "b", "--lineage", "vic", "--recent", "8000", "--remove-nuc-duplicates", "--nuc-hamming-distance-threshold", "80", "--length", "1710", "--minimum-nuc-length", "1710"],
         "title": "tree B/Vic"
         },
 
