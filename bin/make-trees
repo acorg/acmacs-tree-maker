@@ -70,7 +70,7 @@ DATA = {
     "by": {
         "base": "B/NEW_HAMPSHIRE/1/2016_E5",
         "prepend": [],
-        "args": ["--flu", "b", "--lineage", "yam", "--recent", "8000", "--remove-nuc-duplicates", "--nuc-hamming-distance-threshold", "80", "--most-common-length"],
+        "args": ["--flu", "b", "--lineage", "yam", "--recent", "8000", "--remove-nuc-duplicates", "--nuc-hamming-distance-threshold", "80", "--length", "1710", "--minimum-nuc-length", "1710"],
         "title": "tree B/Yam"
         },
     }
