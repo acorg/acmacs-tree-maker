@@ -61,7 +61,7 @@ def init(args):
     config["source"] = fasta[0] # str(Path(fasta[0]).resolve())
     print("working_dir", working_dir, working_dir.name)
     if working_dir.name == "h1":
-        config["machines"] = ["i20"]
+        config["machines"] = ["i19"]
     elif working_dir.name == "h3":
         config["machines"] = ["i22"]
     elif working_dir.name == "bv":
