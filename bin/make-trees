@@ -1,11 +1,12 @@
 #! /usr/bin/env python3
 
-import sys, os, shutil, datetime, subprocess
+import sys, os, shutil, datetime, subprocess, socket
 from pathlib import Path
 
 SUBTYPES = ["h1", "h3", "bv", "by"]
 if len(sys.argv) == 2:
     SUBTYPES = sys.argv[1].lower().split()
+HOSTNAME = socket.gethostname()
 
 # ======================================================================
 
@@ -14,6 +15,12 @@ DATA = {
         "base": "AH1N1/SOUTH_AUSTRALIA/30/2013_MDCK1_h67695CD8",  # 2009-04-09
         "prepend": [
             "AH1N1/MICHIGAN/45/2015_QMC2MDCK3",                   # 2015-09-07
+        ],
+        "exclude": [
+            # 2020-08-10 Sarah: They're not sequenced by a CC or NIC, but by a company.  The sequences don't have obvious errors, but are very different (obviously) from the rest. My feeling is they're either variant viruses (from swine) or a sequencing error.
+            "AH1N1/ANKARA/14015-724/2019_hC7E3C2CC",
+            "AH1N1/ANKARA/14017-004/2019_h55177F82",
+            "AH1N1/ANKARA/14015-736/2019_hF435606A",
         ],
         "args": ["--flu", "h1", "--recent-matched", "5000,3000", "--remove-nuc-duplicates", "--host", "human", "--nuc-hamming-distance-threshold", "80", "--most-common-length"],
         "title": "tree H1"
@@ -79,11 +86,15 @@ ROOT_DIR.mkdir(parents=True)
 shutil.copyfile(Path(os.environ["ACMACSD_ROOT"], "data", "seqdb.json.xz"), Path(ROOT_DIR, "seqdb.json.xz"))
 
 for subtype in SUBTYPES:
-    if DATA[subtype]["prepend"]:
+    if DATA[subtype].get("exclude"):
+        exclude = " ".join(f"--exclude-seq-id '{name}'" for name in DATA[subtype]["exclude"])
+    else:
+        exclude = ""
+    if DATA[subtype].get("prepend"):
         prepend = " ".join(f"--prepend '{name}'" for name in DATA[subtype]["prepend"])
     else:
         prepend = ""
-    command = f"""seqdb3 '{"' '".join(SEQDB3_COMMON_ARGS)}' '{"' '".join(DATA[subtype]["args"])}' --base-seq-id '{DATA[subtype]["base"]}' {prepend} --fasta source.fas"""
+    command = f"""seqdb3 '{"' '".join(SEQDB3_COMMON_ARGS)}' '{"' '".join(DATA[subtype]["args"])}' --base-seq-id '{DATA[subtype]["base"]}' {exclude} {prepend} --fasta source.fas"""
 
     subtype_dir = Path(ROOT_DIR, subtype)
     subtype_dir.mkdir()
@@ -91,8 +102,9 @@ for subtype in SUBTYPES:
     with script_path.open("w") as script:
         script.write(f"#! /bin/bash\n{command}\n")
     script_path.chmod(0o755)
-    pane = subprocess.check_output(["tmux", "new-window", "-c", str(subtype_dir), "-P"]).decode("utf-8").strip()
-    subprocess.check_call(["tmux", "send-keys", "-t", pane, f"""echo "title '{DATA[subtype]["title"]}'" && ./export.sh && tree-maker init && title '{DATA[subtype]["title"]}' && mg tree-maker.config && echo tree-maker wait""", "Enter"])
+    if HOSTNAME in ["i19"]:
+        pane = subprocess.check_output(["tmux", "new-window", "-c", str(subtype_dir), "-P"]).decode("utf-8").strip()
+        subprocess.check_call(["tmux", "send-keys", "-t", pane, f"""echo "title '{DATA[subtype]["title"]}'" && ./export.sh && tree-maker init && title '{DATA[subtype]["title"]}' && mg tree-maker.config && echo tree-maker wait""", "Enter"])
 
 
 # ======================================================================
