@@ -56,14 +56,14 @@ DATA = {
             "AH3N2/JAMAICA/1447/2018_OR"                          # 2018-02-19    2a1b 131K
         ],
         # before 2020-02-10  "args": ["--flu", "h3", "--recent-matched", "3000,4000", "--host", "human", "--nuc-hamming-distance-threshold", "80"],
-        "args": ["--flu", "h3", "--recent-matched", "5000,3000", "--remove-nuc-duplicates", "--host", "human", "--nuc-hamming-distance-threshold", "80", "--length", "1650", "--minimum-nuc-length", "1650"],
+        "args": ["--flu", "h3", "--recent-matched", "5000,3000", "--remove-nuc-duplicates", "--host", "human", "--nuc-hamming-distance-threshold", "100", "--length", "1650", "--minimum-nuc-length", "1650"],
         "title": "tree H3"
         },
 
     "bv": {
         "base": "B/VICTORIA/830/2013_MDCK2",
         "prepend": [],
-        "args": ["--flu", "b", "--lineage", "vic", "--recent", "8000", "--remove-nuc-duplicates", "--nuc-hamming-distance-threshold", "80", "--length", "1710", "--minimum-nuc-length", "1710"],
+        "args": ["--flu", "b", "--lineage", "vic", "--recent", "8000", "--remove-nuc-duplicates", "--nuc-hamming-distance-threshold", "120", "--length", "1710", "--minimum-nuc-length", "1710"],
         "title": "tree B/Vic"
         },
 
