@@ -22,7 +22,7 @@ DATA = {
             "AH1N1/ANKARA/14017-004/2019_h55177F82",
             "AH1N1/ANKARA/14015-736/2019_hF435606A",
         ],
-        "args": ["--flu", "h1", "--recent-matched", "5000,3000", "--remove-nuc-duplicates", "--host", "human", "--nuc-hamming-distance-threshold", "80", "--most-common-length"],
+        "args": ["--flu", "h1", "--recent-matched", "5000,3000", "--remove-nuc-duplicates", "--host", "human", "--most-common-length"],
         "title": "tree H1"
         },
 
@@ -55,22 +55,22 @@ DATA = {
             "AH3N2/ABU_DHABI/240/2018_OR",                        # 2018-01-01    2a1b 135K
             "AH3N2/JAMAICA/1447/2018_OR"                          # 2018-02-19    2a1b 131K
         ],
-        # before 2020-02-10  "args": ["--flu", "h3", "--recent-matched", "3000,4000", "--host", "human", "--nuc-hamming-distance-threshold", "80"],
-        "args": ["--flu", "h3", "--recent-matched", "5000,3000", "--remove-nuc-duplicates", "--host", "human", "--nuc-hamming-distance-threshold", "100", "--length", "1650", "--minimum-nuc-length", "1650"],
+        # before 2020-02-10  "args": ["--flu", "h3", "--recent-matched", "3000,4000", "--host", "human"],
+        "args": ["--flu", "h3", "--recent-matched", "5000,3000", "--remove-nuc-duplicates", "--host", "human", "--length", "1650", "--minimum-nuc-length", "1650"],
         "title": "tree H3"
         },
 
     "bv": {
         "base": "B/VICTORIA/830/2013_MDCK2",
         "prepend": [],
-        "args": ["--flu", "b", "--lineage", "vic", "--recent", "8000", "--remove-nuc-duplicates", "--nuc-hamming-distance-threshold", "120", "--length", "1710", "--minimum-nuc-length", "1710"],
+        "args": ["--flu", "b", "--lineage", "vic", "--recent", "8000", "--remove-nuc-duplicates", "--length", "1710", "--minimum-nuc-length", "1710"],
         "title": "tree B/Vic"
         },
 
     "by": {
         "base": "B/NEW_HAMPSHIRE/1/2016_E5",
         "prepend": [],
-        "args": ["--flu", "b", "--lineage", "yam", "--recent", "8000", "--remove-nuc-duplicates", "--nuc-hamming-distance-threshold", "80", "--length", "1710", "--minimum-nuc-length", "1710"],
+        "args": ["--flu", "b", "--lineage", "yam", "--recent", "8000", "--remove-nuc-duplicates", "--length", "1710", "--minimum-nuc-length", "1710"],
         "title": "tree B/Yam"
         },
     }
