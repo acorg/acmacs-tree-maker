@@ -29,6 +29,8 @@ DATA = {
     "h3": {
         "base": "AH3N2/VICTORIA/361/2011_MDCK2_h160B8E64",        # 2011-10-24    3C.3
         "prepend": [
+            # [2020-09-07] Nearest common ancestor of 2a and 3a in /syn/eu/ac/results/eu/2019-0417-h3-trees/cdc-usa-2009-2019-250-per-year-1.rough-29532.tree.pdf https://notebooks.antigenic-cartography.org/eu/results/eu/2019-0417-h3-trees/
+            "AH3N2/MARYLAND/30/2012_Rx/MDCK2_hCD1FF690"           # 2012-07-26    3C.3
             # [2020-08-17] Derek thinks that the root (A/STOCKHOLM/6/2014) is not old enough
             "AH3N2/TEXAS/50/2012_E6_h7B522BBD",                   # 2012-04-15    3C.3
             "AH3N2/STOCKHOLM/6/2014_OR",                          # 2014-02-06    3a
