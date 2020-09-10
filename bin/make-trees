@@ -70,10 +70,11 @@ DATA = {
         },
 
     "by": {
-        "base": "B/NEW_HAMPSHIRE/1/2016_E5",
-        "prepend": [],
+        "base": "B/MINNESOTA/2/2014_MDCK1_hF5650512",
+        "prepend": ["B/IDAHO/1/2014_MDCK1_h45F759E9", "B/MASSACHUSETTS/7/2014_MK1/MDCK1_h42B3D3E5"],
         "args": ["--flu", "b", "--lineage", "yam", "--recent", "8000", "--remove-nuc-duplicates", "--length", "1710", "--minimum-nuc-length", "1710"],
         "title": "tree B/Yam"
+        # "base": "B/NEW_HAMPSHIRE/1/2016_E5", # too recent for 8k unique sequences
         },
     }
 
