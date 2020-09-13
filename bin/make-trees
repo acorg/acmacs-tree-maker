@@ -27,12 +27,12 @@ DATA = {
         },
 
     "h3": {
-        "base": "AH3N2/VICTORIA/361/2011_MDCK2_h160B8E64",        # 2011-10-24    3C.3
+        "base": "AH3N2/VICTORIA/361/2011_MDCK2_h160B8E64",        # 2011-10-24    3C.3  
         "prepend": [
             # [2020-09-07] Nearest common ancestor of 2a and 3a in /syn/eu/ac/results/eu/2019-0417-h3-trees/cdc-usa-2009-2019-250-per-year-1.rough-29532.tree.pdf https://notebooks.antigenic-cartography.org/eu/results/eu/2019-0417-h3-trees/
             "AH3N2/MARYLAND/30/2012_Rx/MDCK2_hCD1FF690"           # 2012-07-26    3C.3
             # [2020-08-17] Derek thinks that the root (A/STOCKHOLM/6/2014) is not old enough
-            "AH3N2/TEXAS/50/2012_E6_h7B522BBD",                   # 2012-04-15    3C.3
+            "AH3N2/TEXAS/50/2012_E6_h7B522BBD",                   # 2012-04-15    3C.3  root in MELB tree 2020
             "AH3N2/STOCKHOLM/6/2014_OR",                          # 2014-02-06    3a
             # [2020-02-07] intermediate strains from nextflu https://nextstrain.org/flu/seasonal/h3n2/ha/2y to keep 3a at the top
             "AH3N2/SWITZERLAND/9715293/2013_SIAT1/SIAT2/SIAT1",   # 2013-12-06    3a
@@ -63,14 +63,14 @@ DATA = {
         },
 
     "bv": {
-        "base": "B/VICTORIA/830/2013_MDCK2",
+        "base": "B/VICTORIA/830/2013_MDCK2", # MELB: B/BRISBANE/60/2008, B/CHONGQING BANAN/1840/2017 (V1A)
         "prepend": [],
         "args": ["--flu", "b", "--lineage", "vic", "--recent", "8000", "--remove-nuc-duplicates", "--length", "1710", "--minimum-nuc-length", "1710"],
         "title": "tree B/Vic"
         },
 
     "by": {
-        "base": "B/MINNESOTA/2/2014_MDCK1_hF5650512",
+        "base": "B/MINNESOTA/2/2014_MDCK1_hF5650512", # MELB uses B/Florida/4/2006 as base (Y1 clade), B/MASSACHUSETTS/02/2012 egg (Y2), B/HUBEI WUJIAGANG/20158/2009
         "prepend": ["B/IDAHO/1/2014_MDCK1_h45F759E9", "B/MASSACHUSETTS/7/2014_MK1/MDCK1_h42B3D3E5"],
         "args": ["--flu", "b", "--lineage", "yam", "--recent", "8000", "--remove-nuc-duplicates", "--length", "1710", "--minimum-nuc-length", "1710"],
         "title": "tree B/Yam"
