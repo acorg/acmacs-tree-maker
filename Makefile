@@ -16,7 +16,7 @@ TREE_NEWICK_TO_JSON_PY_LIB = $(DIST)/$(TREE_NEWICK_TO_JSON_PY_LIB_NAME)$(PYTHON_
 
 all: install
 
-CONFIGURE_PYTHON = 1
+# CONFIGURE_PYTHON = 1
 include $(ACMACSD_ROOT)/share/Makefile.config
 
 LDLIBS = \
