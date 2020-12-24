@@ -30,7 +30,7 @@ sys.path[:0] = [str(Path(os.environ["ACMACSD_ROOT"]).resolve().joinpath("py"))]
 import logging; module_logger = logging.getLogger(__name__)
 
 from acmacs_base import timeit
-from tree_maker import config as config_m, maker as maker_m
+from acmacs_tree_maker import config as config_m, maker as maker_m
 
 # ----------------------------------------------------------------------
 
