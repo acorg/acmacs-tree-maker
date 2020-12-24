@@ -27,12 +27,6 @@ LDLIBS = \
 
 install: $(TARGETS)
 	$(call install_all,$(AD_PACKAGE_NAME))
-    #$(call install_py_lib,$(TREE_NEWICK_TO_JSON_PY_LIB))
-	# $(call symbolic_link_wildcard,$(abspath bin)/tree-*,$(AD_BIN))
-	# $(call symbolic_link,$(abspath bin)/make-trees,$(AD_BIN))
-	# $(call symbolic_link,$(abspath bin)/garli-score,$(AD_BIN))
-	# $(call symbolic_link_wildcard,$(abspath py)/*,$(AD_PY))
-	#$(call symbolic_link_wildcard,$(DIST)/tree-*,$(AD_BIN))
 
 test: install
 	@#if [ "$$(uname)" == "Darwin" ]; then $(DIST)/tree-newick-to-json <test/newick.phy | diff test/newick.json -; else echo WARNING: no tree-maker test run on $$(uname); fi
