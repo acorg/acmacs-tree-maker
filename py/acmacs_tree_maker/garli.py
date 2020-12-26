@@ -6,8 +6,8 @@
 import logging; module_logger = logging.getLogger(__name__)
 from pathlib import Path
 import sys, re, time as time_m, operator, subprocess
-from acmacs_base import email
-from . import htcondor, maker_base
+from acmacs_base import email, htcondor
+from . import maker_base
 
 # ----------------------------------------------------------------------
 
@@ -18,7 +18,6 @@ class Garli (maker_base.MakerBase):
         self.default_args = []
 
     def prepare(self, state):
-        # from . import htcondor
         working_dir = Path(state["working_dir"])
         output_dir = working_dir.joinpath("garli")
         output_dir.mkdir(parents=True, exist_ok=True)

@@ -6,7 +6,8 @@
 import logging; module_logger = logging.getLogger(__name__)
 from pathlib import Path
 import re, time as time_m, operator, subprocess
-from . import htcondor, maker_base
+from acmacs_base import htcondor
+from . import maker_base
 
 # ----------------------------------------------------------------------
 
@@ -30,7 +31,6 @@ class RaxmlNG (maker_base.MakerBase):
             # -w /syn/eu/ac/results/signature-pages/2019-1007/h3/raxml -e 0.001 -N 1 --stop-after-seconds 1 -o AH3N2/BRISBANE/10/2007_MDCKx -D -n 2019-1007-h3.0000 -p 254251598
 
     def prepare(self, state):
-        # from . import htcondor
         working_dir = Path(state["working_dir"])
         output_dir = working_dir.joinpath("raxmlng")
         output_dir.mkdir(parents=True, exist_ok=True)

@@ -6,7 +6,8 @@
 import logging; module_logger = logging.getLogger(__name__)
 from pathlib import Path
 import re, time as time_m, operator, subprocess
-from . import htcondor, maker_base
+from acmacs_base import htcondor
+from . import maker_base
 
 # ----------------------------------------------------------------------
 
@@ -17,7 +18,6 @@ class Raxml (maker_base.MakerBase):
         self.default_args = ["-c", "4", "-f", "d", "--silent", "--no-seq-check"]
 
     def prepare(self, state):
-        # from . import htcondor
         working_dir = Path(state["working_dir"])
         output_dir = working_dir.joinpath("raxml")
         output_dir.mkdir(parents=True, exist_ok=True)
