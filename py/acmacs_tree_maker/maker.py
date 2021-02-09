@@ -278,7 +278,7 @@ class RaxmlNGGarli (RunnerBase):
         # files.write_binary(Path(self.state["working_dir"], "tree.json.xz"), j)
 
     def convert_tree_to_json(self, treefile):
-        subprocess.check_call(["tal", "-D", "whocc", treefile, "tree.json.xz"])
+        subprocess.check_call(["tal", "--seqdb", "../seqdb.json.xz", "-D", "whocc", treefile, "tree.json.xz"]) # use the same seqdb that was used to generate source.fas! otherwise populating with duplicates does not work correctly
         subprocess.check_call(["tal", "tree.json.xz", "tree.pdf"])
 
 # ======================================================================
