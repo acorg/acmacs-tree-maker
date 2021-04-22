@@ -27,6 +27,7 @@ LDLIBS = \
 
 install: $(TARGETS)
 	$(call install_all,$(AD_PACKAGE_NAME))
+	$(call install_py_all)
 
 test: install
 	@#if [ "$$(uname)" == "Darwin" ]; then $(DIST)/tree-newick-to-json <test/newick.phy | diff test/newick.json -; else echo WARNING: no tree-maker test run on $$(uname); fi
