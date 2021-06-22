@@ -135,8 +135,8 @@ for subtype in SUBTYPES:
     script_path.chmod(0o755)
     if HOSTNAME in ["i19"]:
         pane = subprocess.check_output(["tmux", "new-window", "-c", str(subtype_dir), "-P"]).decode("utf-8").strip()
-        subprocess.check_call(["tmux", "send-keys", "-t", pane, f"""./export.sh && tree-maker init && echo title '{DATA[subtype]["title"]}' && echo mg tree-maker.config && echo tree-maker wait""", "Enter"])
-        # subprocess.check_call(["tmux", "send-keys", "-t", pane, f"""echo "title '{DATA[subtype]["title"]}'" && ./export.sh && tree-maker init && title '{DATA[subtype]["title"]}' && mg tree-maker.config && echo tree-maker wait""", "Enter"])
+        subprocess.check_call(["tmux", "send-keys", "-t", pane, f"""./export.sh && tree-maker-2019 init && echo title '{DATA[subtype]["title"]}' && echo mg tree-maker.config && echo tree-maker-2019 wait""", "Enter"])
+        # subprocess.check_call(["tmux", "send-keys", "-t", pane, f"""echo "title '{DATA[subtype]["title"]}'" && ./export.sh && tree-maker-2019 init && title '{DATA[subtype]["title"]}' && mg tree-maker.config && echo tree-maker-2019 wait""", "Enter"])
 
 
 # ======================================================================
